@@ -5468,6 +5468,9 @@
       .then(function(res){
         if(!res.ok) throw new Error("HTTP " + res.status);
         setStatus("Synced " + timeNow(), "connected");
+        var meta = loadMeta();
+        meta.lastPushedAt = Date.now();
+        saveMeta(meta);
       })
       .catch(function(err){
         console.error("Drive push failed:", err);
@@ -5526,10 +5529,24 @@
     pushTimer = setTimeout(pushToDrive, 2500);
   }
 
+  function markLocalChange(){
+    var meta = loadMeta();
+    meta.lastLocalChangeAt = Date.now();
+    saveMeta(meta);
+  }
+
+  function hasUnsyncedLocalChanges(){
+    var meta = loadMeta();
+    return !!(meta.lastLocalChangeAt && (!meta.lastPushedAt || meta.lastLocalChangeAt > meta.lastPushedAt));
+  }
+
   var originalSetItem = localStorage.setItem.bind(localStorage);
   localStorage.setItem = function(key, value){
     originalSetItem(key, value);
-    if(SYNC_KEYS.indexOf(key) !== -1) scheduleSync();
+    if(SYNC_KEYS.indexOf(key) !== -1){
+      markLocalChange();
+      scheduleSync();
+    }
   };
 
   // ---------------- connect flow ----------------
@@ -5572,15 +5589,23 @@
           }
         });
       } else {
-        // silent reconnect on page load - just pull quietly, no prompt
-        pullFromDrive(function(pullErr, data){
-          if(!pullErr && data){
-            applyDriveData(data);
-            setStatus("Synced " + timeNow(), "connected");
-          } else {
-            setStatus("Connected", "connected");
-          }
-        });
+        // silent reconnect on page load - just pull quietly, no prompt.
+        // But if this device has local edits that never made it to Drive
+        // (e.g. the tab was closed before the debounced push fired), push
+        // those up first instead of silently overwriting them.
+        if(hasUnsyncedLocalChanges()){
+          setStatus("Catching up unsynced changes\u2026", "connected");
+          pushToDrive();
+        } else {
+          pullFromDrive(function(pullErr, data){
+            if(!pullErr && data){
+              applyDriveData(data);
+              setStatus("Synced " + timeNow(), "connected");
+            } else {
+              setStatus("Connected", "connected");
+            }
+          });
+        }
       }
       scheduleSilentRefresh();
     });
