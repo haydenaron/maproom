@@ -1392,6 +1392,7 @@
     flex-direction:column;
     box-shadow:0 20px 60px rgba(0,0,0,0.55);
     overflow:hidden;
+    position:relative;
   }
   #pdf-view-header{
     display:flex;
@@ -1414,11 +1415,48 @@
     text-decoration:none;
     display:inline-block;
   }
+  #pdf-view-notes-btn.active{
+    background:var(--brass);
+    color:#1a1204;
+    border-color:var(--brass);
+    font-weight:500;
+  }
   #pdf-view-frame{
     flex:1;
     width:100%;
     border:none;
     background:#525659;
+  }
+  #pdf-view-notes-panel{
+    display:none;
+    position:absolute;
+    top:53px; right:0; bottom:0;
+    width:320px;
+    max-width:85vw;
+    background:var(--panel);
+    border-left:1px solid var(--panel-border);
+    padding:18px;
+    overflow-y:auto;
+    z-index:5;
+    box-shadow:-8px 0 20px rgba(0,0,0,0.3);
+  }
+  #pdf-view-notes-panel.open{display:block;}
+  #pdf-view-notes-panel h3{
+    margin:0 0 12px;
+    font-family:'Playfair Display', serif;
+    color:var(--brass);
+    font-size:15px;
+  }
+  #pdf-view-notes-content{
+    white-space:pre-wrap;
+    font-size:14px;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  #pdf-view-notes-content.empty{
+    color:var(--ink-muted);
+    font-style:italic;
+    font-size:13px;
   }
 
   #app-dialog-backdrop{
@@ -1869,7 +1907,7 @@
     <g id="dynamic-layer"></g>
   </svg>
   <div id="waypoint-form">
-    <h3>Add a stop</h3>
+    <h3 id="wp-form-title">Add a stop</h3>
     <label for="wp-place">Place</label>
     <input id="wp-place" type="text" placeholder="e.g. Naples, Italy" maxlength="60" autocomplete="off">
     <label for="wp-year">Year</label>
@@ -2061,11 +2099,16 @@
     <div id="pdf-view-header">
       <span id="pdf-view-title">Document</span>
       <div id="pdf-view-actions">
+        <button id="pdf-view-notes-btn" class="ghost-btn" type="button">&#128221; Notes</button>
         <a id="pdf-view-download" class="ghost-btn" download="">Download</a>
         <button id="pdf-view-close" class="ghost-btn">Close</button>
       </div>
     </div>
     <iframe id="pdf-view-frame"></iframe>
+    <div id="pdf-view-notes-panel">
+      <h3>Notes on this document</h3>
+      <div id="pdf-view-notes-content"></div>
+    </div>
   </div>
 </div>
 
@@ -2294,6 +2337,7 @@
   var arming = false;
   var pendingPoint = null;
   var draggingWp = null; // {famId, wpId} while a stop dot is being dragged
+  var editingWaypoint = null; // {famId, wpId} while editing an existing stop's place/year
 
   var STORAGE_KEY = "family-migration-data-v2";
 
@@ -2387,6 +2431,11 @@
           e.stopPropagation();
           draggingWp = { famId: fam.id, wpId: wp.id };
         });
+        hit.addEventListener("click", function(e){
+          if(arming || dragMoved) return;
+          e.stopPropagation();
+          openWaypointEditForm(fam, wp, e.clientX, e.clientY);
+        });
         dynamicLayer.appendChild(hit);
 
         var label = el("text",{
@@ -2477,9 +2526,15 @@
         sorted.forEach(function(wp){
           var row = document.createElement("div");
           row.className = "waypoint-row";
+          row.title = "Click to edit this stop";
+          row.style.cursor = "pointer";
           row.innerHTML =
             '<span class="wp-year">'+wp.year+'</span>' +
             '<span class="wp-place">'+escapeHtml(wp.place)+'</span>';
+          row.addEventListener("click", function(e){
+            e.stopPropagation();
+            openWaypointEditForm(fam, wp);
+          });
           var del = document.createElement("button");
           del.className = "wp-del";
           del.textContent = "\u2715";
@@ -2566,6 +2621,30 @@
   var wpForm = document.getElementById("waypoint-form");
   var wpPlaceInput = document.getElementById("wp-place");
   var wpYearInput = document.getElementById("wp-year");
+  var wpFormTitle = document.getElementById("wp-form-title");
+  var wpSaveBtn = document.getElementById("wp-save");
+
+  function openWaypointEditForm(fam, wp, clientX, clientY){
+    disarm();
+    editingWaypoint = { famId: fam.id, wpId: wp.id };
+    pendingPoint = null;
+    activeFamilyId = fam.id;
+    wpFormTitle.textContent = "Edit stop";
+    wpSaveBtn.textContent = "Save changes";
+    wpPlaceInput.value = wp.place;
+    wpYearInput.value = wp.year;
+    var wrapRect = document.getElementById("map-wrap").getBoundingClientRect();
+    var cx = (clientX !== undefined) ? clientX : (wrapRect.left + wrapRect.width / 2);
+    var cy = (clientY !== undefined) ? clientY : (wrapRect.top + wrapRect.height / 2);
+    var left = cx - wrapRect.left + 16;
+    var top = cy - wrapRect.top + 10;
+    if(left + 230 > wrapRect.width) left = cx - wrapRect.left - 246;
+    if(top + 180 > wrapRect.height) top = cy - wrapRect.top - 190;
+    wpForm.style.left = left + "px";
+    wpForm.style.top = top + "px";
+    wpForm.style.display = "block";
+    wpPlaceInput.focus();
+  }
 
   function updateHintBar(){
     if(arming && activeFamilyId){
@@ -2691,6 +2770,7 @@
     if(dragMoved){ dragMoved = false; return; } // treat as pan, not a click
     if(!arming || !activeFamilyId) return;
     var p = svgPoint(e);
+    editingWaypoint = null;
     pendingPoint = {x:p.x, y:p.y};
     renderMapLines();
 
@@ -2702,6 +2782,8 @@
     wpForm.style.left = left + "px";
     wpForm.style.top = top + "px";
     wpForm.style.display = "block";
+    wpFormTitle.textContent = "Add a stop";
+    wpSaveBtn.textContent = "Add stop";
     wpPlaceInput.value = "";
     wpYearInput.value = "";
     wpPlaceInput.focus();
@@ -2709,17 +2791,31 @@
 
   document.getElementById("wp-cancel").addEventListener("click", function(){
     pendingPoint = null;
+    editingWaypoint = null;
     wpForm.style.display = "none";
     renderMapLines();
   });
 
   document.getElementById("wp-save").addEventListener("click", function(){
-    if(!pendingPoint || !activeFamilyId) return;
     var place = wpPlaceInput.value.trim();
     var year = parseInt(wpYearInput.value, 10);
     if(!place){ wpPlaceInput.focus(); return; }
     if(!year || isNaN(year)){ wpYearInput.focus(); return; }
 
+    if(editingWaypoint){
+      var efam = state.families.find(function(f){ return f.id === editingWaypoint.famId; });
+      if(efam){
+        var ewp = efam.waypoints.find(function(w){ return w.id === editingWaypoint.wpId; });
+        if(ewp){ ewp.place = place; ewp.year = year; }
+      }
+      editingWaypoint = null;
+      wpForm.style.display = "none";
+      saveState();
+      renderAll();
+      return;
+    }
+
+    if(!pendingPoint || !activeFamilyId) return;
     var geo = invert(pendingPoint.x, pendingPoint.y);
     var fam = state.families.find(function(f){ return f.id===activeFamilyId; });
     if(!fam) return;
@@ -5131,6 +5227,9 @@
   var pdfViewTitle = document.getElementById("pdf-view-title");
   var pdfViewFrame = document.getElementById("pdf-view-frame");
   var pdfViewDownload = document.getElementById("pdf-view-download");
+  var pdfViewNotesBtn = document.getElementById("pdf-view-notes-btn");
+  var pdfViewNotesPanel = document.getElementById("pdf-view-notes-panel");
+  var pdfViewNotesContent = document.getElementById("pdf-view-notes-content");
   var currentPdfBlobUrl = null;
 
   function openPdfViewer(doc){
@@ -5138,6 +5237,15 @@
     pdfViewTitle.textContent = doc.name || "Document";
     pdfViewFrame.src = "about:blank";
     pdfViewBackdrop.classList.add("open");
+    pdfViewNotesPanel.classList.remove("open");
+    pdfViewNotesBtn.classList.remove("active");
+    if(doc.notes && doc.notes.trim()){
+      pdfViewNotesContent.textContent = doc.notes;
+      pdfViewNotesContent.classList.remove("empty");
+    } else {
+      pdfViewNotesContent.textContent = "No notes were added for this document.";
+      pdfViewNotesContent.classList.add("empty");
+    }
 
     function showBlob(blob){
       if(currentPdfBlobUrl) URL.revokeObjectURL(currentPdfBlobUrl);
@@ -5176,6 +5284,8 @@
   function closePdfViewer(){
     pdfViewBackdrop.classList.remove("open");
     pdfViewFrame.src = "about:blank";
+    pdfViewNotesPanel.classList.remove("open");
+    pdfViewNotesBtn.classList.remove("active");
     if(currentPdfBlobUrl){
       URL.revokeObjectURL(currentPdfBlobUrl);
       currentPdfBlobUrl = null;
@@ -5183,6 +5293,10 @@
   }
   document.getElementById("pdf-view-close").addEventListener("click", closePdfViewer);
   pdfViewBackdrop.addEventListener("click", function(e){ if(e.target === pdfViewBackdrop) closePdfViewer(); });
+  pdfViewNotesBtn.addEventListener("click", function(){
+    pdfViewNotesPanel.classList.toggle("open");
+    pdfViewNotesBtn.classList.toggle("active");
+  });
 
   // ---------------- backup export/import hook ----------------
   window.__fpDocuments = {
