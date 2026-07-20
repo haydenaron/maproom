@@ -1702,7 +1702,7 @@
     font-size:15px;
     color:var(--brass);
   }
-  .document-card-view-btn{
+  .document-card-edit-btn{
     flex:none;
     background:var(--ocean);
     border:1px solid var(--panel-border);
@@ -1714,7 +1714,7 @@
     cursor:pointer;
     white-space:nowrap;
   }
-  .document-card-view-btn:hover{border-color:var(--brass); color:var(--brass);}
+  .document-card-edit-btn:hover{border-color:var(--brass); color:var(--brass);}
   .document-card-date{
     font-family:'IBM Plex Mono', monospace;
     font-size:11px;
@@ -1726,10 +1726,8 @@
     line-height:1.5;
     color:var(--ink);
     white-space:pre-wrap;
-    overflow:hidden;
-    display:-webkit-box;
-    -webkit-line-clamp:4;
-    -webkit-box-orient:vertical;
+    max-height:80px;
+    overflow-y:auto;
     flex:1;
   }
   .document-card-folder{
@@ -4943,12 +4941,12 @@
       name.textContent = doc.name || "Untitled document";
       headRow.appendChild(name);
       var viewBtn = document.createElement("button");
-      viewBtn.className = "document-card-view-btn";
-      viewBtn.textContent = "\ud83d\udc41 View";
-      viewBtn.title = "View this PDF";
+      viewBtn.className = "document-card-edit-btn";
+      viewBtn.textContent = "\u270e Edit";
+      viewBtn.title = "Edit this document's details";
       viewBtn.addEventListener("click", function(e){
         e.stopPropagation();
-        openPdfViewer(doc);
+        openDocumentModal(doc.id);
       });
       headRow.appendChild(viewBtn);
       card.appendChild(headRow);
@@ -4991,7 +4989,7 @@
         });
         card.appendChild(tagsRow);
       }
-      card.addEventListener("click", function(){ openDocumentModal(doc.id); });
+      card.addEventListener("click", function(){ openPdfViewer(doc); });
       documentsListEl.appendChild(card);
     });
   }
