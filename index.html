@@ -4592,6 +4592,12 @@
     }
   }
 
+  function extractSortableYear(dateStr){
+    if(!dateStr) return null;
+    var m = String(dateStr).match(/(\d{3,4})/);
+    return m ? parseInt(m[0], 10) : null;
+  }
+
   function tagName(id){
     var t = tags.find(function(x){ return x.id === id; });
     return t ? t.name : null;
