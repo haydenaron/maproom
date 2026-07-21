@@ -389,6 +389,7 @@
     display:block;
     cursor:grab;
     background:var(--ocean-deep);
+    touch-action:none;
   }
   svg#map.panning{cursor:grabbing;}
   svg#map.armed, #country-svg.armed{cursor:crosshair;}
@@ -1066,6 +1067,7 @@
     cursor:grab;
     position:absolute;
     top:0; left:0;
+    touch-action:none;
   }
   #country-svg.active{display:block;}
   #country-svg.panning{cursor:grabbing;}
@@ -2078,9 +2080,9 @@
     <div class="pf-field"><label>Folder</label>
       <select id="document-folder-input"><option value="">— Unfiled —</option></select>
     </div>
-    <div class="pf-field"><label>Location</label>
-      <select id="document-location-input"><option value="">— No location —</option></select>
-      <div class="pf-hint">Matches this document to a country/map in Explore Maps, so it shows up when viewing pins there.</div>
+    <div class="pf-field"><label>Locations</label>
+      <div id="document-locations-list" class="tag-picker"></div>
+      <div class="pf-hint">Matches this document to one or more countries/maps in Explore Maps, so it shows up when viewing pins there.</div>
     </div>
     <div class="pf-field">
       <label>Tags</label>
@@ -2784,6 +2786,84 @@
     svg.classList.remove("panning");
   });
 
+  // ---------------- touch support (pan with one finger, pinch to zoom with two) ----------------
+  var pinchState = null;
+  function touchDist(t0, t1){
+    var dx = t1.clientX - t0.clientX, dy = t1.clientY - t0.clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+  function touchSvgPoint(clientX, clientY){
+    var pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    var ctm = svg.getScreenCTM();
+    return pt.matrixTransform(ctm.inverse());
+  }
+  svg.addEventListener("touchstart", function(e){
+    if(arming) return; // don't hijack placement taps
+    if(e.touches.length === 1){
+      isPanning = true;
+      dragMoved = false;
+      pinchState = null;
+      panStart = {x:e.touches[0].clientX, y:e.touches[0].clientY};
+      viewStart = {x:view.x, y:view.y};
+    } else if(e.touches.length === 2){
+      isPanning = false;
+      dragMoved = true; // a pinch should never be read as a tap afterward
+      var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      pinchState = {
+        startDist: touchDist(e.touches[0], e.touches[1]),
+        startW: view.w,
+        startViewX: view.x,
+        startViewY: view.y,
+        midSvg: touchSvgPoint(midX, midY)
+      };
+    }
+  }, {passive:true});
+  svg.addEventListener("touchmove", function(e){
+    if(e.touches.length === 2 && pinchState){
+      e.preventDefault();
+      var d = touchDist(e.touches[0], e.touches[1]);
+      var newW = Math.max(MIN_W, Math.min(MAX_W, pinchState.startW * (pinchState.startDist / d)));
+      var ratio = newW / pinchState.startW;
+      view.w = newW;
+      view.h = newW * (IMG_H / IMG_W);
+      view.x = pinchState.midSvg.x - (pinchState.midSvg.x - pinchState.startViewX) * ratio;
+      view.y = pinchState.midSvg.y - (pinchState.midSvg.y - pinchState.startViewY) * ratio;
+      clampView();
+      applyView();
+      return;
+    }
+    if(e.touches.length === 1 && isPanning){
+      var t = e.touches[0];
+      var dxScreen = t.clientX - panStart.x, dyScreen = t.clientY - panStart.y;
+      if(Math.abs(dxScreen) > 3 || Math.abs(dyScreen) > 3) dragMoved = true;
+      if(dragMoved){
+        e.preventDefault();
+        var rect = svg.getBoundingClientRect();
+        var scale = view.w / rect.width;
+        view.x = viewStart.x - dxScreen * scale;
+        view.y = viewStart.y - dyScreen * scale;
+        clampView();
+        applyView();
+      }
+    }
+  }, {passive:false});
+  svg.addEventListener("touchend", function(e){
+    if(e.touches.length === 0){
+      isPanning = false;
+      pinchState = null;
+      svg.classList.remove("panning");
+    } else if(e.touches.length === 1){
+      // lifted one finger out of a pinch - keep panning with the remaining finger
+      pinchState = null;
+      isPanning = true;
+      dragMoved = true;
+      panStart = {x:e.touches[0].clientX, y:e.touches[0].clientY};
+      viewStart = {x:view.x, y:view.y};
+    }
+  });
+
   svg.addEventListener("click", function(e){
     if(dragMoved){ dragMoved = false; return; } // treat as pan, not a click
     if(!arming || !activeFamilyId) return;
@@ -3344,6 +3424,90 @@
     }
     panning = false;
     svg.classList.remove("panning");
+  });
+
+  // ---------------- touch support (pan with one finger, pinch to zoom with two) ----------------
+  var pinchState = null;
+  function touchDist(t0, t1){
+    var dx = t1.clientX - t0.clientX, dy = t1.clientY - t0.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  function touchSvgPoint(clientX, clientY){
+    var pt = svg.createSVGPoint();
+    pt.x = clientX; pt.y = clientY;
+    var ctm = svg.getScreenCTM();
+    return pt.matrixTransform(ctm.inverse());
+  }
+  svg.addEventListener("touchstart", function(e){
+    if(!currentRegion || arming || pinMode || routeBuilder) return;
+    if(e.touches.length === 1){
+      panning = true;
+      dragMoved = false;
+      pinchState = null;
+      panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      var v = getView(currentRegion);
+      viewStart = { x: v.x, y: v.y };
+    } else if(e.touches.length === 2){
+      panning = false;
+      dragMoved = true; // a pinch should never be read as a tap afterward
+      var v2 = getView(currentRegion);
+      var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      pinchState = {
+        startDist: touchDist(e.touches[0], e.touches[1]),
+        startW: v2.w,
+        startViewX: v2.x,
+        startViewY: v2.y,
+        midSvg: touchSvgPoint(midX, midY)
+      };
+    }
+  }, {passive:true});
+  svg.addEventListener("touchmove", function(e){
+    if(!currentRegion) return;
+    if(e.touches.length === 2 && pinchState){
+      e.preventDefault();
+      var v = getView(currentRegion);
+      var d = touchDist(e.touches[0], e.touches[1]);
+      var newW = Math.max(v.fullW * 0.04, Math.min(v.fullW, pinchState.startW * (pinchState.startDist / d)));
+      var ratio = newW / pinchState.startW;
+      v.w = newW;
+      v.h = newW * (v.fullH / v.fullW);
+      v.x = pinchState.midSvg.x - (pinchState.midSvg.x - pinchState.startViewX) * ratio;
+      v.y = pinchState.midSvg.y - (pinchState.midSvg.y - pinchState.startViewY) * ratio;
+      clampView();
+      applyView();
+      return;
+    }
+    if(e.touches.length === 1 && panning){
+      var t = e.touches[0];
+      var dx = t.clientX - panStart.x, dy = t.clientY - panStart.y;
+      if(Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+      if(dragMoved){
+        e.preventDefault();
+        var rect = svg.getBoundingClientRect();
+        var v3 = getView(currentRegion);
+        var scale = v3.w / rect.width;
+        v3.x = viewStart.x - dx * scale;
+        v3.y = viewStart.y - dy * scale;
+        clampView();
+        applyView();
+      }
+    }
+  }, {passive:false});
+  svg.addEventListener("touchend", function(e){
+    if(e.touches.length === 0){
+      panning = false;
+      pinchState = null;
+      svg.classList.remove("panning");
+    } else if(e.touches.length === 1){
+      // lifted one finger out of a pinch - keep panning with the remaining finger
+      pinchState = null;
+      panning = true;
+      dragMoved = true;
+      panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      var v4 = getView(currentRegion);
+      viewStart = { x: v4.x, y: v4.y };
+    }
   });
 
   function openStopPopup(e){
@@ -4194,7 +4358,7 @@
     allDocs.forEach(function(d){
       var tNames = docTagNames(d, allTags);
       var isCountryTagMatch = tNames.indexOf(countryLabel) !== -1;
-      var isLocationMatch = d.locationCountryKey === countryKey;
+      var isLocationMatch = (d.locationCountryKeys || (d.locationCountryKey ? [d.locationCountryKey] : [])).indexOf(countryKey) !== -1;
       if(!(isCountryTagMatch || isLocationMatch)) return;
       result.push({
         doc: d,
@@ -4574,7 +4738,10 @@
           documents = Array.isArray(parsed.documents) ? parsed.documents : [];
           tags = Array.isArray(parsed.tags) ? parsed.tags : [];
           folders.forEach(function(f){ if(!Array.isArray(f.tagIds)) f.tagIds = []; });
-          documents.forEach(function(d){ if(!Array.isArray(d.tagIds)) d.tagIds = []; });
+          documents.forEach(function(d){
+            if(!Array.isArray(d.tagIds)) d.tagIds = [];
+            if(!Array.isArray(d.locationCountryKeys)) d.locationCountryKeys = d.locationCountryKey ? [d.locationCountryKey] : [];
+          });
         }
       }
     }catch(e){ console.error("Could not load documents:", e); }
@@ -4754,6 +4921,86 @@
   }
   function readTagPicker(container){
     return (container._selectedTagIds || []).slice();
+  }
+
+  function renderLocationPicker(container, currentLocationKeys){
+    container.innerHTML = "";
+    var selected = currentLocationKeys.slice();
+    container._selectedLocationKeys = selected;
+
+    var countriesApi = window.__fpExploreCountriesApi;
+    var allCountries = countriesApi ? countriesApi.getAll() : {};
+    function countryLabel(key){
+      return allCountries[key] ? allCountries[key].label : null;
+    }
+
+    var select = document.createElement("select");
+    select.className = "tag-picker-select";
+    var chipsRow = document.createElement("div");
+    chipsRow.className = "tag-picker-chips";
+
+    function renderChips(){
+      chipsRow.innerHTML = "";
+      if(selected.length === 0){
+        var none = document.createElement("div");
+        none.className = "tag-picker-empty";
+        none.textContent = "No locations added yet.";
+        chipsRow.appendChild(none);
+        return;
+      }
+      selected.forEach(function(key){
+        var label = countryLabel(key);
+        if(!label) return;
+        var chip = document.createElement("span");
+        chip.className = "tag-chip active";
+        var nameSpan = document.createElement("span");
+        nameSpan.textContent = "\ud83d\udccd " + label;
+        var rm = document.createElement("span");
+        rm.className = "tag-edit-icon";
+        rm.textContent = "\u2715";
+        rm.title = "Remove location";
+        rm.addEventListener("click", function(){
+          selected = selected.filter(function(k){ return k !== key; });
+          container._selectedLocationKeys = selected;
+          renderChips();
+          renderSelectOptions();
+        });
+        chip.appendChild(nameSpan);
+        chip.appendChild(rm);
+        chipsRow.appendChild(chip);
+      });
+    }
+    function renderSelectOptions(){
+      select.innerHTML = "";
+      var placeholder = document.createElement("option");
+      placeholder.value = "";
+      var countryKeys = Object.keys(allCountries);
+      var remaining = countryKeys.filter(function(k){ return selected.indexOf(k) === -1; });
+      placeholder.textContent = countryKeys.length === 0 ? "No countries/maps yet" : (remaining.length === 0 ? "All locations added" : "+ Add a location\u2026");
+      select.appendChild(placeholder);
+      remaining.slice().sort(function(a, b){ return countryLabel(a).localeCompare(countryLabel(b)); }).forEach(function(key){
+        var opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = countryLabel(key);
+        select.appendChild(opt);
+      });
+    }
+    select.addEventListener("change", function(){
+      if(select.value){
+        selected.push(select.value);
+        container._selectedLocationKeys = selected;
+        renderChips();
+        renderSelectOptions();
+      }
+    });
+
+    renderSelectOptions();
+    renderChips();
+    container.appendChild(select);
+    container.appendChild(chipsRow);
+  }
+  function readLocationPicker(container){
+    return (container._selectedLocationKeys || []).slice();
   }
 
   // ---------------- tag modal ----------------
@@ -4969,10 +5216,11 @@
       var folderTag = document.createElement("div");
       folderTag.className = "document-card-folder";
       var folderText = folder ? folder.name : "Unfiled";
-      if(doc.locationCountryKey && window.__fpExploreCountriesApi){
+      var docLocKeys = doc.locationCountryKeys || (doc.locationCountryKey ? [doc.locationCountryKey] : []);
+      if(docLocKeys.length > 0 && window.__fpExploreCountriesApi){
         var locCountries = window.__fpExploreCountriesApi.getAll();
-        var locLabel = locCountries[doc.locationCountryKey] ? locCountries[doc.locationCountryKey].label : null;
-        if(locLabel) folderText += " \u00b7 \ud83d\udccd " + locLabel;
+        var locLabels = docLocKeys.map(function(k){ return locCountries[k] ? locCountries[k].label : null; }).filter(Boolean);
+        if(locLabels.length) folderText += " \u00b7 \ud83d\udccd " + locLabels.join(", ");
       }
       folderTag.textContent = folderText;
       card.appendChild(folderTag);
@@ -5008,7 +5256,7 @@
   var documentNameInput = document.getElementById("document-name-input");
   var documentDateInput = document.getElementById("document-date-input");
   var documentFolderInput = document.getElementById("document-folder-input");
-  var documentLocationInput = document.getElementById("document-location-input");
+  var documentLocationsList = document.getElementById("document-locations-list");
   var documentTagsList = document.getElementById("document-tags-list");
   var documentNotesInput = document.getElementById("document-notes-input");
   var documentUploadStatus = document.getElementById("document-upload-status");
@@ -5030,31 +5278,12 @@
     });
   }
 
-  function renderDocumentLocationOptions(){
-    documentLocationInput.innerHTML = "";
-    var noneOpt = document.createElement("option");
-    noneOpt.value = "";
-    noneOpt.textContent = "\u2014 No location \u2014";
-    documentLocationInput.appendChild(noneOpt);
-    var countriesApi = window.__fpExploreCountriesApi;
-    if(!countriesApi) return;
-    var countries = countriesApi.getAll();
-    Object.keys(countries).sort(function(a, b){
-      return countries[a].label.localeCompare(countries[b].label);
-    }).forEach(function(key){
-      var opt = document.createElement("option");
-      opt.value = key;
-      opt.textContent = countries[key].label;
-      documentLocationInput.appendChild(opt);
-    });
-  }
-
   function openDocumentModal(documentId){
     editingDocumentId = documentId || null;
     var doc = editingDocumentId ? documents.find(function(d){ return d.id === editingDocumentId; }) : null;
     documentModalTitle.textContent = doc ? "Edit document" : "Upload a document";
     renderDocumentFolderOptions();
-    renderDocumentLocationOptions();
+    renderLocationPicker(documentLocationsList, doc ? (doc.locationCountryKeys || (doc.locationCountryKey ? [doc.locationCountryKey] : [])) : []);
     renderTagPicker(documentTagsList, doc ? (doc.tagIds || []) : []);
 
     pendingFileData = null;
@@ -5062,7 +5291,6 @@
     documentNameInput.value = doc ? doc.name : "";
     documentDateInput.value = doc ? doc.date : "";
     documentFolderInput.value = doc && doc.folderId ? doc.folderId : "";
-    documentLocationInput.value = doc && doc.locationCountryKey ? doc.locationCountryKey : "";
     documentNotesInput.value = doc ? doc.notes : "";
     documentUploadStatus.textContent = "";
     documentUploadStatus.className = "upload-status";
@@ -5163,6 +5391,7 @@
     }
 
     var chosenTagIds = readTagPicker(documentTagsList);
+    var chosenLocationKeys = readLocationPicker(documentLocationsList);
     var saveBtn = document.getElementById("document-save-btn");
 
     function finishSave(fileFields){
@@ -5173,7 +5402,8 @@
           doc.date = documentDateInput.value.trim();
           doc.notes = documentNotesInput.value;
           doc.folderId = documentFolderInput.value || null;
-          doc.locationCountryKey = documentLocationInput.value || null;
+          doc.locationCountryKeys = chosenLocationKeys;
+          delete doc.locationCountryKey;
           doc.tagIds = chosenTagIds;
           if(fileFields) assignFileFields(doc, fileFields);
         }
@@ -5184,7 +5414,7 @@
           date: documentDateInput.value.trim(),
           notes: documentNotesInput.value,
           folderId: documentFolderInput.value || null,
-          locationCountryKey: documentLocationInput.value || null,
+          locationCountryKeys: chosenLocationKeys,
           tagIds: chosenTagIds
         };
         assignFileFields(newDoc, fileFields);
@@ -5344,7 +5574,10 @@
       documents = Array.isArray(payload.documents) ? payload.documents : [];
       tags = Array.isArray(payload.tags) ? payload.tags : [];
       folders.forEach(function(f){ if(!Array.isArray(f.tagIds)) f.tagIds = []; });
-      documents.forEach(function(d){ if(!Array.isArray(d.tagIds)) d.tagIds = []; });
+      documents.forEach(function(d){
+        if(!Array.isArray(d.tagIds)) d.tagIds = [];
+        if(!Array.isArray(d.locationCountryKeys)) d.locationCountryKeys = d.locationCountryKey ? [d.locationCountryKey] : [];
+      });
       saveDocs();
       currentFolderId = "__all__";
       activeTagFilters = [];
