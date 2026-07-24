@@ -5586,8 +5586,7 @@
       headRow.className = "document-card-head";
       var name = document.createElement("div");
       name.className = "document-card-name";
-      var isImgDoc = (doc.fileMimeType || "").indexOf("image/") === 0;
-      name.textContent = (isImgDoc ? "\ud83d\uddbc\ufe0f " : "\ud83d\udcd5 ") + (doc.name || "Untitled document");
+      name.textContent = doc.name || "Untitled document";
       headRow.appendChild(name);
       var viewBtn = document.createElement("button");
       viewBtn.className = "document-card-edit-btn";
