@@ -929,6 +929,11 @@
     border-bottom:1px solid var(--panel-border);
     flex:none;
   }
+  .country-tab-row{
+    display:flex;
+    align-items:center;
+    gap:2px;
+  }
   .country-tab-btn{
     background:none;
     border:none;
@@ -941,9 +946,24 @@
     border-radius:4px;
     cursor:pointer;
     border-left:3px solid transparent;
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
   .country-tab-btn:hover{color:var(--ink); background:rgba(255,255,255,0.03);}
   .country-tab-btn.active{color:var(--brass); border-left-color:var(--brass); background:rgba(201,162,39,0.08);}
+  .country-tab-rename-icon{
+    flex:none;
+    font-size:12px;
+    color:var(--ink-muted);
+    opacity:0;
+    cursor:pointer;
+    padding:2px 6px;
+  }
+  .country-tab-row:hover .country-tab-rename-icon{ opacity:0.6; }
+  .country-tab-rename-icon:hover{ opacity:1 !important; color:var(--brass); }
 
   #country-lines-list{
     flex:none !important;
@@ -2161,12 +2181,12 @@
       <button id="add-folder-btn" class="full-btn ghost-full-btn">+ Add a folder</button>
     </div>
     <div class="tree-panel-section">
+      <button id="upload-document-btn" class="full-btn">+ Upload a document</button>
+    </div>
+    <div class="tree-panel-section">
       <label class="tree-field-label">Tags</label>
       <div id="tag-chip-list"></div>
       <button id="add-tag-btn" class="full-btn ghost-full-btn" style="margin-top:8px;">+ Add a tag</button>
-    </div>
-    <div class="tree-panel-section">
-      <button id="upload-document-btn" class="full-btn">+ Upload a document</button>
     </div>
     <div class="tree-panel-section">
       <label class="tree-field-label">Sort by</label>
@@ -3219,7 +3239,7 @@
   }
 
   // ---------------- persisted delta (only user changes, not the built-in images) ----------------
-  var delta = { deletedCountries: [], deletedRegions: [], addedCountries: {}, addedRegions: {}, editedRegions: {} };
+  var delta = { deletedCountries: [], deletedRegions: [], addedCountries: {}, addedRegions: {}, editedRegions: {}, editedCountries: {} };
   var countries = {}; // merged, in-memory working set: key -> {label, regions:[{key,label,image,w,h,year}]}
 
   function rebuildCountriesFromDelta(){
@@ -3247,6 +3267,9 @@
       if(edit.label !== undefined && edit.label !== null) region.label = edit.label;
       if(edit.year !== undefined) region.year = edit.year;
     });
+    Object.keys(delta.editedCountries).forEach(function(ck){
+      if(base[ck]) base[ck].label = delta.editedCountries[ck];
+    });
     countries = base;
   }
 
@@ -3264,6 +3287,7 @@
           delta.addedCountries = parsedDelta.addedCountries || {};
           delta.addedRegions = parsedDelta.addedRegions || {};
           delta.editedRegions = parsedDelta.editedRegions || {};
+          delta.editedCountries = parsedDelta.editedCountries || {};
         }
       }
     }catch(e){ console.error("Could not load custom maps:", e); }
@@ -3382,6 +3406,7 @@
     Object.keys(delta.editedRegions).forEach(function(k){
       if(k.indexOf(countryKey + ":") === 0) delete delta.editedRegions[k];
     });
+    delete delta.editedCountries[countryKey];
     saveDelta();
     saveNotes();
   }
@@ -3466,6 +3491,13 @@
       if(newName === null) return;
       newName = newName.trim();
       if(!newName) return;
+      // If this is the only map for its country, the country tab shows this same name -
+      // renameCountry() keeps the region and the country tab in sync in one place.
+      if(countries[currentCountry] && countries[currentCountry].regions.length === 1){
+        renameCountry(currentCountry, newName);
+        mapNotesLabel.textContent = newName;
+        return;
+      }
       region.label = newName;
       var editKey = currentCountry + ":" + currentRegion;
       if(!delta.editedRegions[editKey]) delta.editedRegions[editKey] = {};
@@ -4230,16 +4262,59 @@
     });
   });
 
+  function renameCountry(key, newLabel){
+    if(!countries[key]) return;
+    countries[key].label = newLabel;
+    delta.editedCountries[key] = newLabel;
+    // Keep a single-region country's map name in sync, since that region IS "the map" shown for this country
+    if(countries[key].regions.length === 1){
+      var onlyRegion = countries[key].regions[0];
+      onlyRegion.label = newLabel;
+      var editKey = key + ":" + onlyRegion.key;
+      if(!delta.editedRegions[editKey]) delta.editedRegions[editKey] = {};
+      delta.editedRegions[editKey].label = newLabel;
+    }
+    saveDelta();
+    renderCountryTabList();
+    if(currentCountry === key){
+      addRegionCountryLabel.textContent = newLabel;
+      viewCountryDocsLabel.textContent = newLabel;
+      renderRegionTabs();
+      renderMapTitleBar();
+    }
+  }
+
   function renderCountryTabList(){
     countryTabList.innerHTML = "";
     Object.keys(countries).sort(function(a, b){
       return countries[a].label.localeCompare(countries[b].label);
     }).forEach(function(key){
+      var row = document.createElement("div");
+      row.className = "country-tab-row";
+
       var btn = document.createElement("button");
       btn.className = "country-tab-btn" + (key === currentCountry ? " active" : "");
       btn.textContent = countries[key].label;
+      btn.title = countries[key].label;
       btn.addEventListener("click", function(){ switchCountry(key); });
-      countryTabList.appendChild(btn);
+      row.appendChild(btn);
+
+      var renameIcon = document.createElement("span");
+      renameIcon.className = "country-tab-rename-icon";
+      renameIcon.textContent = "\u270e";
+      renameIcon.title = "Rename this country";
+      renameIcon.addEventListener("click", function(e){
+        e.stopPropagation();
+        appPrompt("Rename this country:", countries[key].label, function(newName){
+          if(newName === null) return;
+          newName = newName.trim();
+          if(!newName) return;
+          renameCountry(key, newName);
+        });
+      });
+      row.appendChild(renameIcon);
+
+      countryTabList.appendChild(row);
     });
   }
 
@@ -4785,6 +4860,7 @@
         delta.addedCountries = payload.countriesDelta.addedCountries || {};
         delta.addedRegions = payload.countriesDelta.addedRegions || {};
         delta.editedRegions = payload.countriesDelta.editedRegions || {};
+        delta.editedCountries = payload.countriesDelta.editedCountries || {};
       }
       rebuildCountriesFromDelta();
       saveNotes();
