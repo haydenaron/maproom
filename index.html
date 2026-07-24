@@ -1288,7 +1288,152 @@
     margin-bottom:6px;
   }
   .upload-status.error{ color:var(--danger); }
-  #add-country-modal-backdrop, #add-region-modal-backdrop, #note-modal-backdrop, #folder-modal-backdrop, #document-modal-backdrop, #stop-edit-modal-backdrop, #tag-modal-backdrop, #pin-documents-modal-backdrop{
+  .file-field-row{ display:flex; gap:8px; align-items:center; }
+  .file-field-row input[type="file"]{ flex:1; min-width:0; }
+  .pf-field-label-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px; }
+  .pf-field-label-row label{ margin-bottom:0; }
+  .pf-field-label-row-btns{ display:flex; gap:8px; }
+  .drive-import-btn{
+    flex:none;
+    font-size:12px;
+    padding:7px 10px;
+    white-space:nowrap;
+  }
+  .note-images-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:4px;
+  }
+  .note-image-thumb{
+    position:relative;
+    width:84px;
+    height:84px;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid var(--panel-border);
+    cursor:pointer;
+    flex:none;
+  }
+  .note-image-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .note-image-thumb .note-image-remove{
+    position:absolute;
+    top:2px; right:2px;
+    width:20px; height:20px;
+    border-radius:50%;
+    background:rgba(6,12,18,0.8);
+    color:var(--ink);
+    border:none;
+    font-size:12px;
+    line-height:20px;
+    text-align:center;
+    cursor:pointer;
+    padding:0;
+  }
+  .note-image-thumb .note-image-remove:hover{ background:var(--danger); }
+  .note-card-images{
+    display:flex;
+    gap:6px;
+    margin-top:8px;
+  }
+  .note-card-images img{
+    width:44px;
+    height:44px;
+    object-fit:cover;
+    border-radius:3px;
+    border:1px solid var(--panel-border);
+  }
+  #image-lightbox-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(6,12,18,0.88);
+    z-index:160;
+    align-items:center;
+    justify-content:center;
+  }
+  #image-lightbox-backdrop.open{ display:flex; }
+  #image-lightbox{
+    position:relative;
+    max-width:90vw;
+    max-height:90vh;
+  }
+  #image-lightbox img{
+    max-width:90vw;
+    max-height:90vh;
+    display:block;
+    border-radius:4px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.55);
+  }
+  #image-lightbox-close{
+    position:absolute;
+    top:-14px; right:-14px;
+    width:32px; height:32px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    font-size:14px;
+    cursor:pointer;
+  }
+  #image-lightbox-close:hover{ border-color:var(--brass); color:var(--brass); }
+  #drive-picker-modal{
+    width:480px;
+    max-width:92vw;
+    max-height:80vh;
+    display:flex;
+    flex-direction:column;
+  }
+  #drive-picker-search{
+    width:100%;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    padding:9px 10px;
+    border-radius:3px;
+    font-family:'Spectral', serif;
+    font-size:14px;
+    margin:2px 0 12px;
+  }
+  #drive-picker-search:focus{ outline:none; border-color:var(--brass); }
+  #drive-picker-list{
+    overflow-y:auto;
+    flex:1;
+    min-height:120px;
+    max-height:46vh;
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+  }
+  .drive-picker-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 12px;
+    cursor:pointer;
+    border-bottom:1px solid var(--panel-border);
+    font-size:13.5px;
+  }
+  .drive-picker-row:last-child{ border-bottom:none; }
+  .drive-picker-row:hover{ background:rgba(201,162,39,0.12); }
+  .drive-picker-icon{ flex:none; font-size:15px; }
+  .drive-picker-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .drive-picker-empty{
+    padding:24px 16px;
+    text-align:center;
+    color:var(--ink-muted);
+    font-style:italic;
+    font-size:13px;
+  }
+  #add-country-modal-backdrop, #add-region-modal-backdrop, #note-modal-backdrop, #folder-modal-backdrop, #document-modal-backdrop, #stop-edit-modal-backdrop, #tag-modal-backdrop, #pin-documents-modal-backdrop, #drive-picker-modal-backdrop{
     display:none;
     position:fixed;
     inset:0;
@@ -1297,7 +1442,8 @@
     align-items:center;
     justify-content:center;
   }
-  #add-country-modal-backdrop.open, #add-region-modal-backdrop.open, #note-modal-backdrop.open, #folder-modal-backdrop.open, #document-modal-backdrop.open, #stop-edit-modal-backdrop.open, #tag-modal-backdrop.open, #pin-documents-modal-backdrop.open{display:flex;}
+  #add-country-modal-backdrop.open, #add-region-modal-backdrop.open, #note-modal-backdrop.open, #folder-modal-backdrop.open, #document-modal-backdrop.open, #stop-edit-modal-backdrop.open, #tag-modal-backdrop.open, #pin-documents-modal-backdrop.open, #drive-picker-modal-backdrop.open{display:flex;}
+  #drive-picker-modal-backdrop{ z-index:140; }
   #pin-documents-modal{
     background:var(--panel);
     border:1px solid var(--panel-border);
@@ -1966,7 +2112,25 @@
   <div id="note-modal" class="upload-modal">
     <h2 id="note-modal-title">Add a note</h2>
     <div class="pf-field"><label>Title</label><input type="text" id="note-title-input" maxlength="120" placeholder="e.g. Why the family left Lviv"></div>
-    <div class="pf-field"><label>Note</label><textarea id="note-body-input" rows="10" placeholder="Write as much as you like…"></textarea></div>
+    <div class="pf-field">
+      <div class="pf-field-label-row">
+        <label>Note</label>
+        <button type="button" id="note-body-drive-btn" class="ghost-btn drive-import-btn">&#128196; Import from Google Doc</button>
+      </div>
+      <textarea id="note-body-input" rows="10" placeholder="Write as much as you like…"></textarea>
+    </div>
+    <div class="pf-field">
+      <div class="pf-field-label-row">
+        <label>Pictures</label>
+        <div class="pf-field-label-row-btns">
+          <button type="button" id="note-image-add-btn" class="ghost-btn drive-import-btn">&#128247; Add picture</button>
+          <button type="button" id="note-image-drive-btn" class="ghost-btn drive-import-btn">&#128193; From Drive</button>
+        </div>
+      </div>
+      <input type="file" id="note-image-input" accept="image/*" style="display:none;">
+      <div id="note-images-list" class="note-images-list"></div>
+      <div id="note-images-status" class="upload-status"></div>
+    </div>
     <div class="person-modal-actions">
       <button id="note-delete-btn" class="text-btn danger-text">Delete note</button>
       <div class="person-modal-actions-right">
@@ -1977,7 +2141,15 @@
   </div>
 </div>
 
+<div id="image-lightbox-backdrop">
+  <div id="image-lightbox">
+    <button type="button" id="image-lightbox-close">&#10005;</button>
+    <img id="image-lightbox-img" alt="">
+  </div>
+</div>
+
 <div id="page-documents" class="page">
+
   <div id="documents-sidebar">
     <div class="sidebar-header">
       <p class="eyebrow">The Map Room</p>
@@ -2074,7 +2246,13 @@
 <div id="document-modal-backdrop">
   <div id="document-modal" class="upload-modal">
     <h2 id="document-modal-title">Upload a document</h2>
-    <div class="pf-field" id="document-file-field"><label>PDF file</label><input type="file" id="document-file-input" accept="application/pdf"></div>
+    <div class="pf-field" id="document-file-field">
+      <label>File (PDF or image)</label>
+      <div class="file-field-row">
+        <input type="file" id="document-file-input" accept="application/pdf,image/*">
+        <button type="button" id="document-file-drive-btn" class="ghost-btn drive-import-btn">&#128193; From Drive</button>
+      </div>
+    </div>
     <div id="document-file-current"></div>
     <div class="pf-field"><label>Name</label><input type="text" id="document-name-input" maxlength="150" placeholder="e.g. Rosa's naturalization certificate"></div>
     <div class="pf-field"><label>Date</label><input type="text" id="document-date-input" placeholder="e.g. 1923 or 4 May 1923"></div>
@@ -2089,13 +2267,34 @@
       <label>Tags</label>
       <div id="document-tags-list" class="tag-picker"></div>
     </div>
-    <div class="pf-field"><label>Notes</label><textarea id="document-notes-input" rows="5" placeholder="Anything worth remembering about this document…"></textarea></div>
+    <div class="pf-field">
+      <div class="pf-field-label-row">
+        <label>Notes</label>
+        <button type="button" id="document-notes-drive-btn" class="ghost-btn drive-import-btn">&#128196; Import from Google Doc</button>
+      </div>
+      <textarea id="document-notes-input" rows="5" placeholder="Anything worth remembering about this document…"></textarea>
+    </div>
     <div id="document-upload-status" class="upload-status"></div>
     <div class="person-modal-actions">
       <button id="document-delete-btn" class="text-btn danger-text">Delete document</button>
       <div class="person-modal-actions-right">
         <button id="document-cancel-btn" class="ghost-btn">Cancel</button>
         <button id="document-save-btn" class="solid-btn">Save document</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="drive-picker-modal-backdrop">
+  <div id="drive-picker-modal" class="upload-modal">
+    <h2 id="drive-picker-title">Choose a file from Google Drive</h2>
+    <input type="text" id="drive-picker-search" placeholder="Search your Drive…" autocomplete="off">
+    <div id="drive-picker-list"></div>
+    <div id="drive-picker-status" class="upload-status"></div>
+    <div class="person-modal-actions">
+      <div></div>
+      <div class="person-modal-actions-right">
+        <button id="drive-picker-cancel-btn" class="ghost-btn" type="button">Cancel</button>
       </div>
     </div>
   </div>
@@ -2222,7 +2421,12 @@
   <div id="add-country-modal" class="upload-modal">
     <h2>Add a country</h2>
     <div class="pf-field"><label>Country name</label><input type="text" id="ac-name" placeholder="e.g. Lithuania" maxlength="40"></div>
-    <div class="pf-field"><label>Map image</label><input type="file" id="ac-file" accept="image/*"></div>
+    <div class="pf-field"><label>Map image</label>
+      <div class="file-field-row">
+        <input type="file" id="ac-file" accept="image/*">
+        <button type="button" id="ac-file-drive-btn" class="ghost-btn drive-import-btn">&#128193; From Drive</button>
+      </div>
+    </div>
     <div id="ac-status" class="upload-status"></div>
     <div class="person-modal-actions">
       <div></div>
@@ -2238,7 +2442,12 @@
   <div id="add-region-modal" class="upload-modal">
     <h2>Add a map for <span id="ar-country-label">this country</span></h2>
     <div class="pf-field"><label>Map name</label><input type="text" id="ar-name" placeholder="e.g. Galicia" maxlength="40"></div>
-    <div class="pf-field"><label>Map image</label><input type="file" id="ar-file" accept="image/*"></div>
+    <div class="pf-field"><label>Map image</label>
+      <div class="file-field-row">
+        <input type="file" id="ar-file" accept="image/*">
+        <button type="button" id="ar-file-drive-btn" class="ghost-btn drive-import-btn">&#128193; From Drive</button>
+      </div>
+    </div>
     <div id="ar-status" class="upload-status"></div>
     <div class="person-modal-actions">
       <div></div>
@@ -4169,18 +4378,41 @@
   var acName = document.getElementById("ac-name");
   var acFile = document.getElementById("ac-file");
   var acStatus = document.getElementById("ac-status");
+  var acDriveBlob = null;
 
   document.getElementById("add-country-btn").addEventListener("click", function(){
-    acName.value = ""; acFile.value = ""; acStatus.textContent = ""; acStatus.className = "upload-status";
+    acName.value = ""; acFile.value = ""; acDriveBlob = null; acStatus.textContent = ""; acStatus.className = "upload-status";
     acBackdrop.classList.add("open");
     acName.focus();
   });
   document.getElementById("ac-cancel").addEventListener("click", function(){ acBackdrop.classList.remove("open"); });
   acBackdrop.addEventListener("click", function(e){ if(e.target === acBackdrop) acBackdrop.classList.remove("open"); });
+  acFile.addEventListener("change", function(){ acDriveBlob = null; });
+  document.getElementById("ac-file-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a map image from Google Drive",
+      mimeQuery: "mimeType contains 'image/'"
+    }, function(file){
+      acStatus.textContent = "Fetching \u201c" + file.name + "\u201d from Google Drive\u2026";
+      acStatus.className = "upload-status";
+      window.__driveApi.fetchBinary(file.id, function(err, blob){
+        if(err){
+          acStatus.textContent = "Couldn't fetch that file from Drive. Try again.";
+          acStatus.className = "upload-status error";
+          return;
+        }
+        acFile.value = "";
+        acDriveBlob = blob;
+        acStatus.textContent = "Loaded \u201c" + file.name + "\u201d from Google Drive.";
+        acStatus.className = "upload-status";
+        if(!acName.value.trim()) acName.value = file.name.replace(/\.[a-z0-9]+$/i, "");
+      });
+    });
+  });
   document.getElementById("ac-save").addEventListener("click", function(){
     var name = acName.value.trim();
     if(!name){ acStatus.textContent = "Give the country a name."; acStatus.className = "upload-status error"; return; }
-    var file = acFile.files && acFile.files[0];
+    var file = acDriveBlob || (acFile.files && acFile.files[0]);
     if(!file){ acStatus.textContent = "Choose a map image."; acStatus.className = "upload-status error"; return; }
     acStatus.textContent = "Processing image\u2026"; acStatus.className = "upload-status";
     readAndCompressImage(file, function(err, result){
@@ -4218,20 +4450,43 @@
   var arName = document.getElementById("ar-name");
   var arFile = document.getElementById("ar-file");
   var arStatus = document.getElementById("ar-status");
+  var arDriveBlob = null;
 
   document.getElementById("add-region-btn").addEventListener("click", function(){
     if(!currentCountry) return;
     arCountryLabel.textContent = countries[currentCountry].label;
-    arName.value = ""; arFile.value = ""; arStatus.textContent = ""; arStatus.className = "upload-status";
+    arName.value = ""; arFile.value = ""; arDriveBlob = null; arStatus.textContent = ""; arStatus.className = "upload-status";
     arBackdrop.classList.add("open");
     arName.focus();
   });
   document.getElementById("ar-cancel").addEventListener("click", function(){ arBackdrop.classList.remove("open"); });
   arBackdrop.addEventListener("click", function(e){ if(e.target === arBackdrop) arBackdrop.classList.remove("open"); });
+  arFile.addEventListener("change", function(){ arDriveBlob = null; });
+  document.getElementById("ar-file-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a map image from Google Drive",
+      mimeQuery: "mimeType contains 'image/'"
+    }, function(file){
+      arStatus.textContent = "Fetching \u201c" + file.name + "\u201d from Google Drive\u2026";
+      arStatus.className = "upload-status";
+      window.__driveApi.fetchBinary(file.id, function(err, blob){
+        if(err){
+          arStatus.textContent = "Couldn't fetch that file from Drive. Try again.";
+          arStatus.className = "upload-status error";
+          return;
+        }
+        arFile.value = "";
+        arDriveBlob = blob;
+        arStatus.textContent = "Loaded \u201c" + file.name + "\u201d from Google Drive.";
+        arStatus.className = "upload-status";
+        if(!arName.value.trim()) arName.value = file.name.replace(/\.[a-z0-9]+$/i, "");
+      });
+    });
+  });
   document.getElementById("ar-save").addEventListener("click", function(){
     var name = arName.value.trim();
     if(!name){ arStatus.textContent = "Give this map a name."; arStatus.className = "upload-status error"; return; }
-    var file = arFile.files && arFile.files[0];
+    var file = arDriveBlob || (arFile.files && arFile.files[0]);
     if(!file){ arStatus.textContent = "Choose a map image."; arStatus.className = "upload-status error"; return; }
     arStatus.textContent = "Processing image\u2026"; arStatus.className = "upload-status";
     readAndCompressImage(file, function(err, result){
@@ -4627,6 +4882,17 @@
       }
       card.appendChild(title);
       card.appendChild(body);
+      if(Array.isArray(note.images) && note.images.length > 0){
+        var imgRow = document.createElement("div");
+        imgRow.className = "note-card-images";
+        note.images.slice(0, 5).forEach(function(img){
+          var thumbImg = document.createElement("img");
+          thumbImg.src = img.dataUrl;
+          thumbImg.alt = "";
+          imgRow.appendChild(thumbImg);
+        });
+        card.appendChild(imgRow);
+      }
       card.addEventListener("click", function(){ openNoteModal(note.id); });
       notesListEl.appendChild(card);
     });
@@ -4642,12 +4908,124 @@
   var deleteBtn = document.getElementById("note-delete-btn");
   var editingId = null;
 
+  // ---------------- picture attachments ----------------
+  var noteImageInput = document.getElementById("note-image-input");
+  var noteImagesList = document.getElementById("note-images-list");
+  var noteImagesStatus = document.getElementById("note-images-status");
+  var pendingNoteImages = []; // [{id, dataUrl, fileName}] working copy while the modal is open
+
+  function uidImg(){ return "img" + Math.random().toString(36).slice(2, 10); }
+
+  function compressImageFile(file, callback){
+    var maxDim = 1600, quality = 0.85;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        var tw = Math.max(1, Math.round(img.width * scale));
+        var th = Math.max(1, Math.round(img.height * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = tw; canvas.height = th;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, tw, th);
+        var dataUrl;
+        try{ dataUrl = canvas.toDataURL("image/jpeg", quality); }
+        catch(err){ callback(new Error("Couldn't process that image.")); return; }
+        callback(null, dataUrl);
+      };
+      img.onerror = function(){ callback(new Error("That doesn't look like a readable image file.")); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ callback(new Error("Couldn't read that file.")); };
+    reader.readAsDataURL(file);
+  }
+
+  function renderNoteImages(){
+    noteImagesList.innerHTML = "";
+    pendingNoteImages.forEach(function(img){
+      var thumb = document.createElement("div");
+      thumb.className = "note-image-thumb";
+      var imgEl = document.createElement("img");
+      imgEl.src = img.dataUrl;
+      imgEl.alt = img.fileName || "";
+      thumb.appendChild(imgEl);
+      var removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "note-image-remove";
+      removeBtn.textContent = "\u2715";
+      removeBtn.title = "Remove this picture";
+      removeBtn.addEventListener("click", function(e){
+        e.stopPropagation();
+        pendingNoteImages = pendingNoteImages.filter(function(i){ return i.id !== img.id; });
+        renderNoteImages();
+      });
+      thumb.appendChild(removeBtn);
+      thumb.addEventListener("click", function(){
+        window.__fpImageLightbox.open(img.dataUrl, img.fileName || "");
+      });
+      noteImagesList.appendChild(thumb);
+    });
+  }
+
+  function addNoteImageFromFile(file, sourceLabel){
+    noteImagesStatus.textContent = "Processing " + (sourceLabel || file.name) + "\u2026";
+    noteImagesStatus.className = "upload-status";
+    compressImageFile(file, function(err, dataUrl){
+      if(err){
+        noteImagesStatus.textContent = err.message;
+        noteImagesStatus.className = "upload-status error";
+        return;
+      }
+      pendingNoteImages.push({ id: uidImg(), dataUrl: dataUrl, fileName: file.name || sourceLabel || "picture" });
+      noteImagesStatus.textContent = "";
+      noteImagesStatus.className = "upload-status";
+      renderNoteImages();
+    });
+  }
+
+  document.getElementById("note-image-add-btn").addEventListener("click", function(){
+    noteImageInput.click();
+  });
+  noteImageInput.addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    noteImageInput.value = "";
+    if(!file) return;
+    if(file.type.indexOf("image/") !== 0){
+      noteImagesStatus.textContent = "Please choose an image file.";
+      noteImagesStatus.className = "upload-status error";
+      return;
+    }
+    addNoteImageFromFile(file);
+  });
+  document.getElementById("note-image-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a picture from Google Drive",
+      mimeQuery: "mimeType contains 'image/'"
+    }, function(file){
+      noteImagesStatus.textContent = "Fetching \u201c" + file.name + "\u201d from Google Drive\u2026";
+      noteImagesStatus.className = "upload-status";
+      window.__driveApi.fetchBinary(file.id, function(err, blob){
+        if(err){
+          noteImagesStatus.textContent = "Couldn't fetch that file from Drive. Try again.";
+          noteImagesStatus.className = "upload-status error";
+          return;
+        }
+        addNoteImageFromFile(Object.assign(blob, { name: file.name }), file.name);
+      });
+    });
+  });
+
   function openNoteModal(noteId){
     editingId = noteId || null;
     var note = editingId ? notes.find(function(n){ return n.id === editingId; }) : null;
     modalTitleEl.textContent = note ? "Edit note" : "Add a note";
     titleInput.value = note ? note.title : "";
     bodyInput.value = note ? note.body : "";
+    pendingNoteImages = note && Array.isArray(note.images) ? note.images.map(function(i){ return { id: i.id, dataUrl: i.dataUrl, fileName: i.fileName }; }) : [];
+    renderNoteImages();
+    noteImagesStatus.textContent = "";
+    noteImagesStatus.className = "upload-status";
     deleteBtn.style.display = note ? "inline-block" : "none";
     modalBackdrop.classList.add("open");
     setTimeout(function(){ titleInput.focus(); }, 30);
@@ -4655,11 +5033,32 @@
   function closeNoteModal(){
     modalBackdrop.classList.remove("open");
     editingId = null;
+    pendingNoteImages = [];
   }
 
   document.getElementById("add-note-btn").addEventListener("click", function(){ openNoteModal(null); });
   document.getElementById("note-cancel-btn").addEventListener("click", closeNoteModal);
   modalBackdrop.addEventListener("click", function(e){ if(e.target === modalBackdrop) closeNoteModal(); });
+
+  document.getElementById("note-body-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a Google Doc to import",
+      mimeQuery: "mimeType='application/vnd.google-apps.document'"
+    }, function(file){
+      var originalPlaceholder = bodyInput.placeholder;
+      bodyInput.placeholder = "Importing \u201c" + file.name + "\u201d\u2026";
+      window.__driveApi.exportDoc(file.id, function(err, text){
+        bodyInput.placeholder = originalPlaceholder;
+        if(err){
+          appAlert("Couldn't import that Google Doc right now. Try again in a moment.");
+          return;
+        }
+        var trimmed = text.replace(/\s+$/, "");
+        bodyInput.value = bodyInput.value.trim() ? bodyInput.value + "\n\n" + trimmed : trimmed;
+        if(!titleInput.value.trim()) titleInput.value = file.name;
+      });
+    });
+  });
 
   document.getElementById("note-save-btn").addEventListener("click", function(){
     var title = titleInput.value.trim();
@@ -4670,11 +5069,12 @@
       setTimeout(function(){ titleInput.classList.remove("input-flash-error"); }, 900);
       return;
     }
+    var images = pendingNoteImages.slice();
     if(editingId){
       var existing = notes.find(function(n){ return n.id === editingId; });
-      if(existing){ existing.title = title; existing.body = body; }
+      if(existing){ existing.title = title; existing.body = body; existing.images = images; }
     } else {
-      notes.push({ id: uid(), title: title, body: body });
+      notes.push({ id: uid(), title: title, body: body, images: images });
     }
     if(saveNotes()){
       closeNoteModal();
@@ -5186,7 +5586,8 @@
       headRow.className = "document-card-head";
       var name = document.createElement("div");
       name.className = "document-card-name";
-      name.textContent = doc.name || "Untitled document";
+      var isImgDoc = (doc.fileMimeType || "").indexOf("image/") === 0;
+      name.textContent = (isImgDoc ? "\ud83d\uddbc\ufe0f " : "\ud83d\udcd5 ") + (doc.name || "Untitled document");
       headRow.appendChild(name);
       var viewBtn = document.createElement("button");
       viewBtn.className = "document-card-edit-btn";
@@ -5297,9 +5698,10 @@
     documentUploadStatus.className = "upload-status";
 
     if(doc){
+      var isImageDoc = (doc.fileMimeType || "").indexOf("image/") === 0;
       var storedWhere = doc.driveFileId ? "\u2601 Stored in Google Drive" : "\ud83d\udcbe Stored in this browser";
       documentFileCurrent.innerHTML =
-        'Current file: <strong>' + escapeHtml(doc.fileName || "document.pdf") + '</strong> \u00b7 <button type="button" id="document-file-view-btn">View PDF</button>' +
+        'Current file: <strong>' + escapeHtml(doc.fileName || "document.pdf") + '</strong> \u00b7 <button type="button" id="document-file-view-btn">' + (isImageDoc ? "View image" : "View PDF") + '</button>' +
         '<br>' + storedWhere +
         (doc.fileData && !doc.driveFileId && window.__driveApi && window.__driveApi.isConnected() ? ' \u00b7 <button type="button" id="document-move-to-drive-btn">Move to Google Drive</button>' : '');
       documentFileCurrent.style.display = "block";
@@ -5314,7 +5716,7 @@
           moveBtn.textContent = "Moving\u2026";
           moveBtn.disabled = true;
           fetch(doc.fileData).then(function(r){ return r.blob(); }).then(function(blob){
-            window.__driveApi.uploadBinary(blob, doc.fileName || "document.pdf", "application/pdf", function(err, fileId){
+            window.__driveApi.uploadBinary(blob, doc.fileName || "document.pdf", doc.fileMimeType || "application/pdf", function(err, fileId){
               if(err){
                 console.error("Move to Drive failed:", err);
                 appAlert("Couldn't move that file to Drive right now. Try again in a moment.");
@@ -5350,8 +5752,10 @@
   documentFileInput.addEventListener("change", function(e){
     var file = e.target.files && e.target.files[0];
     if(!file) return;
-    if(file.type !== "application/pdf"){
-      documentUploadStatus.textContent = "Please choose a PDF file.";
+    var isPdf = file.type === "application/pdf";
+    var isImage = file.type.indexOf("image/") === 0;
+    if(!isPdf && !isImage){
+      documentUploadStatus.textContent = "Please choose a PDF or an image file.";
       documentUploadStatus.className = "upload-status error";
       documentFileInput.value = "";
       return;
@@ -5361,13 +5765,13 @@
     documentUploadStatus.className = "upload-status";
     var reader = new FileReader();
     reader.onload = function(evt){
-      pendingFileData = { dataUrl: evt.target.result, fileName: file.name };
+      pendingFileData = { dataUrl: evt.target.result, fileName: file.name, mimeType: file.type };
       documentUploadStatus.textContent = sizeMb > 3
         ? "Loaded " + file.name + " (" + sizeMb.toFixed(1) + " MB). Large files use more of your browser's storage."
         : "Loaded " + file.name + ".";
       documentUploadStatus.className = "upload-status";
       if(!documentNameInput.value.trim()){
-        documentNameInput.value = file.name.replace(/\.pdf$/i, "");
+        documentNameInput.value = file.name.replace(/\.[a-z0-9]+$/i, "");
       }
     };
     reader.onerror = function(){
@@ -5375,6 +5779,58 @@
       documentUploadStatus.className = "upload-status error";
     };
     reader.readAsDataURL(file);
+  });
+
+  document.getElementById("document-file-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a PDF or image from Google Drive",
+      mimeQuery: "mimeType='application/pdf' or mimeType contains 'image/'"
+    }, function(file){
+      documentUploadStatus.textContent = "Fetching \u201c" + file.name + "\u201d from Google Drive\u2026";
+      documentUploadStatus.className = "upload-status";
+      window.__driveApi.fetchBinary(file.id, function(err, blob){
+        if(err){
+          documentUploadStatus.textContent = "Couldn't fetch that file from Drive. Try again.";
+          documentUploadStatus.className = "upload-status error";
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(evt){
+          pendingFileData = { dataUrl: evt.target.result, fileName: file.name, mimeType: file.mimeType || blob.type || "application/pdf" };
+          documentUploadStatus.textContent = "Loaded \u201c" + file.name + "\u201d from Google Drive.";
+          documentUploadStatus.className = "upload-status";
+          if(!documentNameInput.value.trim()){
+            documentNameInput.value = file.name.replace(/\.[a-z0-9]+$/i, "");
+          }
+        };
+        reader.onerror = function(){
+          documentUploadStatus.textContent = "Couldn't read that file.";
+          documentUploadStatus.className = "upload-status error";
+        };
+        reader.readAsDataURL(blob);
+      });
+    });
+  });
+
+  document.getElementById("document-notes-drive-btn").addEventListener("click", function(){
+    window.__fpDrivePicker.open({
+      title: "Choose a Google Doc to import as notes",
+      mimeQuery: "mimeType='application/vnd.google-apps.document'"
+    }, function(file){
+      var originalPlaceholder = documentNotesInput.placeholder;
+      documentNotesInput.placeholder = "Importing \u201c" + file.name + "\u201d\u2026";
+      window.__driveApi.exportDoc(file.id, function(err, text){
+        documentNotesInput.placeholder = originalPlaceholder;
+        if(err){
+          appAlert("Couldn't import that Google Doc right now. Try again in a moment.");
+          return;
+        }
+        var trimmed = text.replace(/\s+$/, "");
+        documentNotesInput.value = documentNotesInput.value.trim()
+          ? documentNotesInput.value + "\n\n" + trimmed
+          : trimmed;
+      });
+    });
   });
 
   document.getElementById("document-save-btn").addEventListener("click", function(){
@@ -5386,7 +5842,7 @@
       return;
     }
     if(!editingDocumentId && !pendingFileData){
-      documentUploadStatus.textContent = "Choose a PDF file first.";
+      documentUploadStatus.textContent = "Choose a PDF or image file first.";
       documentUploadStatus.className = "upload-status error";
       return;
     }
@@ -5433,6 +5889,7 @@
       doc.fileName = f.fileName;
       doc.fileData = f.fileData || null;
       doc.driveFileId = f.driveFileId || null;
+      doc.fileMimeType = f.mimeType || "application/pdf";
     }
 
     if(!pendingFileData){
@@ -5445,18 +5902,18 @@
       documentUploadStatus.textContent = "Uploading to Google Drive\u2026";
       documentUploadStatus.className = "upload-status";
       fetch(pendingFileData.dataUrl).then(function(r){ return r.blob(); }).then(function(blob){
-        window.__driveApi.uploadBinary(blob, pendingFileData.fileName, "application/pdf", function(err, fileId){
+        window.__driveApi.uploadBinary(blob, pendingFileData.fileName, pendingFileData.mimeType || "application/pdf", function(err, fileId){
           if(err){
             console.error("Drive upload failed, falling back to local storage:", err);
-            finishSave({ fileName: pendingFileData.fileName, fileData: pendingFileData.dataUrl, driveFileId: null });
+            finishSave({ fileName: pendingFileData.fileName, fileData: pendingFileData.dataUrl, driveFileId: null, mimeType: pendingFileData.mimeType });
             appAlert("Your Google Drive connection wasn't actually working, so \"" + name + "\" was saved to this browser instead, not Drive. Check the connect button in the top bar \u2014 you likely need to reconnect. Browser storage is limited, so do this soon if you're uploading more documents.");
           } else {
-            finishSave({ fileName: pendingFileData.fileName, fileData: null, driveFileId: fileId });
+            finishSave({ fileName: pendingFileData.fileName, fileData: null, driveFileId: fileId, mimeType: pendingFileData.mimeType });
           }
         });
       });
     } else {
-      finishSave({ fileName: pendingFileData.fileName, fileData: pendingFileData.dataUrl, driveFileId: null });
+      finishSave({ fileName: pendingFileData.fileName, fileData: pendingFileData.dataUrl, driveFileId: null, mimeType: pendingFileData.mimeType });
     }
   });
 
@@ -5603,7 +6060,7 @@
   "use strict";
 
   var CLIENT_ID = "221495179081-hdshubjqo85ug97bmmb4ulgmanvia3ja.apps.googleusercontent.com";
-  var SCOPES = "https://www.googleapis.com/auth/drive.file";
+  var SCOPES = "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly";
   var DRIVE_FILE_NAME = "the-map-room-data.json";
   var META_KEY = "drive-sync-meta-v1";
 
@@ -5832,11 +6289,57 @@
       .catch(function(err){ if(callback) callback(err); });
   }
 
+  // ---------------- browsing/importing files that already exist in the user's Drive ----------------
+  function ensureDriveToken(callback){
+    if(accessToken && Date.now() < tokenExpiresAt - 30000){ callback(null, accessToken); return; }
+    if(!ensureGoogleLoaded()){
+      callback(new Error("Google sign-in is still loading. Wait a moment and try again."));
+      return;
+    }
+    var client = getTokenClient(function(resp){
+      if(resp && resp.access_token){
+        accessToken = resp.access_token;
+        tokenExpiresAt = Date.now() + (resp.expires_in || 3600) * 1000;
+        callback(null, accessToken);
+      } else {
+        callback(new Error("Google Drive access wasn't granted."));
+      }
+    });
+    if(!client){ callback(new Error("Google sign-in is still loading. Wait a moment and try again.")); return; }
+    client.requestAccessToken({ prompt: connected ? "" : "consent" });
+  }
+
+  function listDriveFiles(queryStr, callback){
+    if(!accessToken){ callback(new Error("Not connected to Google Drive")); return; }
+    driveFetch("https://www.googleapis.com/drive/v3/files?q=" + encodeURIComponent(queryStr) +
+      "&fields=files(id,name,mimeType,modifiedTime)&orderBy=modifiedTime desc&pageSize=50&spaces=drive")
+      .then(function(res){
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function(data){ callback(null, data.files || []); })
+      .catch(function(err){ callback(err); });
+  }
+
+  function exportDriveDoc(fileId, callback){
+    if(!accessToken){ callback(new Error("Not connected to Google Drive")); return; }
+    driveFetch("https://www.googleapis.com/drive/v3/files/" + fileId + "/export?mimeType=text/plain")
+      .then(function(res){
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      })
+      .then(function(text){ callback(null, text); })
+      .catch(function(err){ callback(err); });
+  }
+
   window.__driveApi = {
     isConnected: function(){ return connected && !!accessToken; },
     uploadBinary: uploadBinaryToDrive,
     fetchBinary: fetchBinaryFromDrive,
-    deleteFile: deleteBinaryFromDrive
+    deleteFile: deleteBinaryFromDrive,
+    ensureToken: ensureDriveToken,
+    listFiles: listDriveFiles,
+    exportDoc: exportDriveDoc
   };
 
   function pushToDrive(){
@@ -6066,6 +6569,134 @@
 
   attemptSilentReconnectOnLoad();
 
+})();
+
+
+// ---------------- shared Google Drive file picker (used by Documents, Explore Maps, Family Notes) ----------------
+(function(){
+  "use strict";
+
+  var backdrop = document.getElementById("drive-picker-modal-backdrop");
+  var titleEl = document.getElementById("drive-picker-title");
+  var searchInput = document.getElementById("drive-picker-search");
+  var listEl = document.getElementById("drive-picker-list");
+  var statusEl = document.getElementById("drive-picker-status");
+  var cancelBtn = document.getElementById("drive-picker-cancel-btn");
+
+  var currentMimeQuery = "";
+  var currentOnSelect = null;
+  var searchDebounceTimer = null;
+
+  function mimeIcon(mimeType){
+    if(mimeType === "application/vnd.google-apps.document") return "\ud83d\udcc4";
+    if(mimeType === "application/pdf") return "\ud83d\udcd5";
+    if(mimeType && mimeType.indexOf("image/") === 0) return "\ud83d\uddbc\ufe0f";
+    return "\ud83d\udcc1";
+  }
+
+  function showResults(){
+    var term = searchInput.value.trim();
+    listEl.innerHTML = "";
+    statusEl.textContent = "Loading\u2026";
+    statusEl.className = "upload-status";
+    var q = "(" + currentMimeQuery + ") and trashed=false";
+    if(term) q += " and name contains '" + term.replace(/[\\']/g, "\\$&") + "'";
+    window.__driveApi.listFiles(q, function(err, files){
+      if(err){
+        statusEl.textContent = "Couldn't load your Drive files \u2014 try reconnecting Google Drive.";
+        statusEl.className = "upload-status error";
+        return;
+      }
+      statusEl.textContent = "";
+      if(!files.length){
+        listEl.innerHTML = '<div class="drive-picker-empty">No matching files found in your Drive.</div>';
+        return;
+      }
+      files.forEach(function(f){
+        var row = document.createElement("div");
+        row.className = "drive-picker-row";
+        var icon = document.createElement("span");
+        icon.className = "drive-picker-icon";
+        icon.textContent = mimeIcon(f.mimeType);
+        var name = document.createElement("span");
+        name.className = "drive-picker-name";
+        name.textContent = f.name;
+        row.appendChild(icon);
+        row.appendChild(name);
+        row.addEventListener("click", function(){
+          var chosenCallback = currentOnSelect;
+          closePicker();
+          if(chosenCallback) chosenCallback(f);
+        });
+        listEl.appendChild(row);
+      });
+    });
+  }
+
+  function closePicker(){
+    backdrop.classList.remove("open");
+    currentOnSelect = null;
+  }
+
+  searchInput.addEventListener("input", function(){
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(showResults, 350);
+  });
+  cancelBtn.addEventListener("click", closePicker);
+  backdrop.addEventListener("click", function(e){ if(e.target === backdrop) closePicker(); });
+
+  window.__fpDrivePicker = {
+    // options: {title, mimeQuery} ; onSelect(file) called with {id, name, mimeType}
+    open: function(options, onSelect){
+      if(!window.__driveApi){
+        appAlert("Google Drive isn't available right now.");
+        return;
+      }
+      titleEl.textContent = options.title || "Choose a file from Google Drive";
+      searchInput.value = "";
+      listEl.innerHTML = "";
+      statusEl.textContent = "Connecting to Google Drive\u2026";
+      statusEl.className = "upload-status";
+      backdrop.classList.add("open");
+      window.__driveApi.ensureToken(function(err){
+        if(err){
+          statusEl.textContent = err.message || "Couldn't connect to Google Drive.";
+          statusEl.className = "upload-status error";
+          return;
+        }
+        currentMimeQuery = options.mimeQuery;
+        currentOnSelect = onSelect;
+        showResults();
+      });
+    }
+  };
+})();
+
+
+// ---------------- shared image lightbox (used by Family Notes, and reusable elsewhere) ----------------
+(function(){
+  "use strict";
+  var backdrop = document.getElementById("image-lightbox-backdrop");
+  var imgEl = document.getElementById("image-lightbox-img");
+  var closeBtn = document.getElementById("image-lightbox-close");
+
+  function close(){
+    backdrop.classList.remove("open");
+    imgEl.src = "";
+  }
+  closeBtn.addEventListener("click", close);
+  backdrop.addEventListener("click", function(e){ if(e.target === backdrop) close(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && backdrop.classList.contains("open")) close();
+  });
+
+  window.__fpImageLightbox = {
+    open: function(src, alt){
+      imgEl.src = src;
+      imgEl.alt = alt || "";
+      backdrop.classList.add("open");
+    }
+  };
 })();
 
 
