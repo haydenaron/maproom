@@ -1551,6 +1551,74 @@
     justify-content:center;
   }
   #pdf-view-modal-backdrop.open{display:flex;}
+
+  #note-view-modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(6,12,18,0.85);
+    z-index:150;
+    align-items:center;
+    justify-content:center;
+  }
+  #note-view-modal-backdrop.open{display:flex;}
+  #note-view-modal{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:8px;
+    width:720px;
+    max-width:92vw;
+    max-height:88vh;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,0.55);
+    overflow:hidden;
+  }
+  #note-view-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--panel-border);
+    flex:none;
+  }
+  #note-view-title{
+    font-family:'Playfair Display', serif;
+    font-size:18px;
+    font-weight:600;
+    color:var(--brass);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #note-view-actions{ display:flex; gap:8px; flex:none; }
+  #note-view-body{
+    padding:20px 22px;
+    overflow-y:auto;
+    flex:1;
+  }
+  #note-view-images{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  #note-view-images img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:4px;
+    border:1px solid var(--panel-border);
+    cursor:pointer;
+  }
+  #note-view-text{
+    font-size:14.5px;
+    line-height:1.7;
+    color:var(--ink);
+    white-space:pre-wrap;
+  }
+  #note-view-text.empty{ color:var(--ink-muted); font-style:italic; }
   #pdf-view-modal{
     background:var(--panel);
     border:1px solid var(--panel-border);
@@ -1717,7 +1785,7 @@
   }
   #notes-list{
     display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns:repeat(auto-fill, minmax(390px, 1fr));
     gap:16px;
     max-width:1100px;
   }
@@ -1729,25 +1797,43 @@
     cursor:pointer;
     display:flex;
     flex-direction:column;
-    min-height:130px;
+    min-height:260px;
   }
   .note-card:hover{border-color:var(--brass);}
+  .note-card-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:8px;
+  }
   .note-card-title{
     font-family:'Playfair Display', serif;
     font-weight:600;
     font-size:16px;
     color:var(--brass);
-    margin:0 0 8px;
+    margin:0;
   }
+  .note-card-edit-btn{
+    flex:none;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    color:var(--ink-muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    padding:4px 8px;
+    border-radius:12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .note-card-edit-btn:hover{border-color:var(--brass); color:var(--brass);}
   .note-card-body{
     font-size:13.5px;
     line-height:1.55;
     color:var(--ink);
     white-space:pre-wrap;
-    overflow:hidden;
-    display:-webkit-box;
-    -webkit-line-clamp:6;
-    -webkit-box-orient:vertical;
+    max-height:200px;
+    overflow-y:auto;
     flex:1;
   }
   .note-card-empty-body{ color:var(--ink-muted); font-style:italic; }
@@ -2157,6 +2243,22 @@
         <button id="note-cancel-btn" class="ghost-btn">Cancel</button>
         <button id="note-save-btn" class="solid-btn">Save note</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="note-view-modal-backdrop">
+  <div id="note-view-modal">
+    <div id="note-view-header">
+      <span id="note-view-title">Note</span>
+      <div id="note-view-actions">
+        <button id="note-view-edit-btn" class="ghost-btn" type="button">&#9998; Edit</button>
+        <button id="note-view-close" class="ghost-btn" type="button">Close</button>
+      </div>
+    </div>
+    <div id="note-view-body">
+      <div id="note-view-images"></div>
+      <div id="note-view-text"></div>
     </div>
   </div>
 </div>
@@ -4930,9 +5032,22 @@
     sorted.forEach(function(note){
       var card = document.createElement("div");
       card.className = "note-card";
+      var head = document.createElement("div");
+      head.className = "note-card-head";
       var title = document.createElement("div");
       title.className = "note-card-title";
       title.textContent = note.title || "Untitled";
+      head.appendChild(title);
+      var editBtn = document.createElement("button");
+      editBtn.className = "note-card-edit-btn";
+      editBtn.textContent = "\u270e Edit";
+      editBtn.title = "Edit this note";
+      editBtn.addEventListener("click", function(e){
+        e.stopPropagation();
+        openNoteModal(note.id);
+      });
+      head.appendChild(editBtn);
+      card.appendChild(head);
       var body = document.createElement("div");
       if(note.body && note.body.trim()){
         body.className = "note-card-body";
@@ -4941,7 +5056,6 @@
         body.className = "note-card-body note-card-empty-body";
         body.textContent = "No content yet.";
       }
-      card.appendChild(title);
       card.appendChild(body);
       if(Array.isArray(note.images) && note.images.length > 0){
         var imgRow = document.createElement("div");
@@ -4954,7 +5068,7 @@
         });
         card.appendChild(imgRow);
       }
-      card.addEventListener("click", function(){ openNoteModal(note.id); });
+      card.addEventListener("click", function(){ openNoteViewer(note.id); });
       notesListEl.appendChild(card);
     });
   }
@@ -5096,6 +5210,53 @@
     editingId = null;
     pendingNoteImages = [];
   }
+
+  // ---------------- note viewer (read-only) ----------------
+  var noteViewBackdrop = document.getElementById("note-view-modal-backdrop");
+  var noteViewTitle = document.getElementById("note-view-title");
+  var noteViewText = document.getElementById("note-view-text");
+  var noteViewImages = document.getElementById("note-view-images");
+  var noteViewEditBtn = document.getElementById("note-view-edit-btn");
+  var noteViewClose = document.getElementById("note-view-close");
+  var viewingId = null;
+
+  function openNoteViewer(noteId){
+    var note = notes.find(function(n){ return n.id === noteId; });
+    if(!note) return;
+    viewingId = noteId;
+    noteViewTitle.textContent = note.title || "Untitled";
+    noteViewImages.innerHTML = "";
+    if(Array.isArray(note.images) && note.images.length > 0){
+      note.images.forEach(function(img){
+        var imgEl = document.createElement("img");
+        imgEl.src = img.dataUrl;
+        imgEl.alt = img.fileName || "";
+        imgEl.addEventListener("click", function(){
+          window.__fpImageLightbox.open(img.dataUrl, img.fileName || "");
+        });
+        noteViewImages.appendChild(imgEl);
+      });
+    }
+    if(note.body && note.body.trim()){
+      noteViewText.textContent = note.body;
+      noteViewText.classList.remove("empty");
+    } else {
+      noteViewText.textContent = "No content yet.";
+      noteViewText.classList.add("empty");
+    }
+    noteViewBackdrop.classList.add("open");
+  }
+  function closeNoteViewer(){
+    noteViewBackdrop.classList.remove("open");
+    viewingId = null;
+  }
+  noteViewClose.addEventListener("click", closeNoteViewer);
+  noteViewBackdrop.addEventListener("click", function(e){ if(e.target === noteViewBackdrop) closeNoteViewer(); });
+  noteViewEditBtn.addEventListener("click", function(){
+    var id = viewingId;
+    closeNoteViewer();
+    openNoteModal(id);
+  });
 
   document.getElementById("add-note-btn").addEventListener("click", function(){ openNoteModal(null); });
   document.getElementById("note-cancel-btn").addEventListener("click", closeNoteModal);
