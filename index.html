@@ -3491,13 +3491,6 @@
       if(newName === null) return;
       newName = newName.trim();
       if(!newName) return;
-      // If this is the only map for its country, the country tab shows this same name -
-      // renameCountry() keeps the region and the country tab in sync in one place.
-      if(countries[currentCountry] && countries[currentCountry].regions.length === 1){
-        renameCountry(currentCountry, newName);
-        mapNotesLabel.textContent = newName;
-        return;
-      }
       region.label = newName;
       var editKey = currentCountry + ":" + currentRegion;
       if(!delta.editedRegions[editKey]) delta.editedRegions[editKey] = {};
@@ -4266,14 +4259,6 @@
     if(!countries[key]) return;
     countries[key].label = newLabel;
     delta.editedCountries[key] = newLabel;
-    // Keep a single-region country's map name in sync, since that region IS "the map" shown for this country
-    if(countries[key].regions.length === 1){
-      var onlyRegion = countries[key].regions[0];
-      onlyRegion.label = newLabel;
-      var editKey = key + ":" + onlyRegion.key;
-      if(!delta.editedRegions[editKey]) delta.editedRegions[editKey] = {};
-      delta.editedRegions[editKey].label = newLabel;
-    }
     saveDelta();
     renderCountryTabList();
     if(currentCountry === key){
