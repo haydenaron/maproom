@@ -1759,6 +1759,235 @@
     font-size:14px;
   }
   #notes-search:focus{outline:none; border-color:var(--brass);}
+
+  #familytree-sidebar{
+    width:330px;
+    min-width:330px;
+    background:var(--panel);
+    border-right:1px solid var(--panel-border);
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    overflow-y:auto;
+  }
+  #tree-search{
+    width:100%;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    padding:9px 10px;
+    border-radius:3px;
+    font-family:'Spectral', serif;
+    font-size:14px;
+  }
+  #tree-search:focus{outline:none; border-color:var(--brass);}
+  #familytree-main{
+    flex:1;
+    position:relative;
+    background:var(--ocean-deep);
+    overflow:hidden;
+  }
+  #familytree-empty-state{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--ink-muted);
+    padding:40px;
+    z-index:2;
+  }
+  #familytree-empty-state.show{display:flex;}
+  #familytree-empty-state p{margin:4px 0;}
+  #familytree-empty-state p:first-child{
+    font-family:'Playfair Display', serif;
+    font-size:20px;
+    color:var(--ink);
+  }
+  #tree-svg{
+    width:100%;
+    height:100%;
+    display:block;
+    cursor:grab;
+    touch-action:none;
+  }
+  #tree-svg.panning{cursor:grabbing;}
+  .tree-node-box{
+    fill:var(--panel);
+    stroke:var(--panel-border);
+    stroke-width:1.5;
+    rx:6;
+    cursor:pointer;
+  }
+  .tree-node-box:hover{stroke:var(--brass);}
+  .tree-node-name{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:15px;
+    fill:var(--brass);
+    pointer-events:none;
+  }
+  .tree-node-years{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    fill:var(--ink-muted);
+    pointer-events:none;
+  }
+  .tree-link{
+    stroke:var(--panel-border);
+    stroke-width:2;
+    fill:none;
+  }
+  .tree-link-partner{
+    stroke:var(--brass);
+    stroke-width:2;
+    stroke-dasharray:4,3;
+  }
+  #tree-zoom-controls{
+    position:absolute;
+    right:18px; bottom:18px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    z-index:5;
+  }
+  #tree-zoom-controls button{
+    width:34px; height:34px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    font-size:16px;
+    cursor:pointer;
+  }
+  #tree-zoom-controls button:hover{border-color:var(--brass); color:var(--brass);}
+
+  #tree-gen-toggle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    border-radius:3px;
+    padding:6px 10px;
+  }
+  #tree-gen-toggle button{
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    font-size:14px;
+    cursor:pointer;
+    flex:none;
+  }
+  #tree-gen-toggle button:hover{border-color:var(--brass); color:var(--brass);}
+  #tree-gen-value{
+    flex:1;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:14px;
+    color:var(--ink);
+  }
+  .tree-node-actions rect{
+    fill:var(--brass);
+    rx:4;
+  }
+  .tree-node-actions text{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    fill:#1a1204;
+    text-anchor:middle;
+    pointer-events:none;
+    font-weight:600;
+  }
+  .tree-node-actions g{ cursor:pointer; }
+  .tree-node-box.focused{ stroke:var(--brass); stroke-width:3; }
+
+  #person-modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(6,12,18,0.72);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+  }
+  #person-modal-backdrop.open{display:flex;}
+  #person-modal{
+    max-height:88vh;
+    overflow-y:auto;
+  }
+
+  #person-view-modal-backdrop{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(6,12,18,0.85);
+    z-index:150;
+    align-items:center;
+    justify-content:center;
+  }
+  #person-view-modal-backdrop.open{display:flex;}
+  #person-view-modal{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:8px;
+    width:640px;
+    max-width:92vw;
+    max-height:88vh;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,0.55);
+    overflow:hidden;
+  }
+  #person-view-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--panel-border);
+    flex:none;
+  }
+  #person-view-title{
+    font-family:'Playfair Display', serif;
+    font-size:18px;
+    font-weight:600;
+    color:var(--brass);
+  }
+  #person-view-actions{ display:flex; gap:8px; flex:none; }
+  #person-view-body{
+    padding:20px 22px;
+    overflow-y:auto;
+    flex:1;
+  }
+  .person-view-row{
+    margin-bottom:12px;
+  }
+  .person-view-row label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-muted);
+    margin-bottom:3px;
+  }
+  .person-view-row .val{
+    font-size:14.5px;
+    color:var(--ink);
+    white-space:pre-wrap;
+  }
+  .person-view-row .val a{
+    color:var(--brass);
+    cursor:pointer;
+    text-decoration:underline;
+    margin-right:10px;
+  }
+
   #notes-main{
     flex:1;
     position:relative;
@@ -2139,6 +2368,7 @@
   <button class="tab-btn" data-page="page-explore">Explore Maps</button>
   <button class="tab-btn" data-page="page-documents">Documents</button>
   <button class="tab-btn" data-page="page-notes">Family Notes</button>
+  <button class="tab-btn" data-page="page-tree">Family Tree</button>
   <div class="tab-bar-spacer"></div>
   <span id="drive-sync-status"></span>
   <button id="drive-connect-btn" class="backup-btn" title="Sync your data through Google Drive">&#9729; Connect Google Drive</button>
@@ -2213,6 +2443,93 @@
     <div id="notes-list"></div>
   </div>
 </div><!-- /page-notes -->
+
+<div id="page-tree" class="page">
+  <div id="familytree-sidebar">
+    <div class="sidebar-header">
+      <p class="eyebrow">The Map Room</p>
+      <h1>Family Tree</h1>
+      <p>Build your tree by hand, or import a GEDCOM file to get started.</p>
+    </div>
+    <div class="tree-panel-section">
+      <button id="add-person-btn" class="full-btn">+ Add a person</button>
+    </div>
+    <div class="tree-panel-section">
+      <label class="tree-field-label">Import GEDCOM</label>
+      <input type="file" id="gedcom-file-input" accept=".ged,.gedcom,text/plain">
+      <div id="gedcom-import-status" class="upload-status"></div>
+    </div>
+    <div class="tree-panel-section">
+      <input type="text" id="tree-search" placeholder="Search people…" autocomplete="off">
+    </div>
+    <div class="tree-panel-section">
+      <label class="tree-field-label">Generations shown</label>
+      <div id="tree-gen-toggle">
+        <button id="tree-gen-minus" type="button">&minus;</button>
+        <span id="tree-gen-value">2</span>
+        <button id="tree-gen-plus" type="button">+</button>
+      </div>
+      <button id="tree-show-all-btn" class="ghost-full-btn full-btn" type="button" style="margin-top:8px;">Show everyone</button>
+    </div>
+  </div>
+  <div id="familytree-main">
+    <div id="familytree-empty-state">
+      <p>No people yet.</p>
+      <p class="tree-empty-sub">Add a person or import a GEDCOM file to get started.</p>
+    </div>
+    <svg id="tree-svg" viewBox="0 0 2000 1200" preserveAspectRatio="xMidYMid meet">
+      <g id="tree-layer"></g>
+    </svg>
+    <div id="tree-zoom-controls">
+      <button id="tree-zoom-in" title="Zoom in">+</button>
+      <button id="tree-zoom-out" title="Zoom out">&minus;</button>
+    </div>
+  </div>
+</div><!-- /page-tree -->
+
+<div id="person-modal-backdrop">
+  <div id="person-modal" class="upload-modal">
+    <h2 id="person-modal-title">Add a person</h2>
+    <div class="pf-field"><label>First name</label><input type="text" id="person-first-name" maxlength="80"></div>
+    <div class="pf-field"><label>Last name</label><input type="text" id="person-last-name" maxlength="80"></div>
+    <div class="pf-field"><label>Name at birth (if different)</label>
+      <div class="file-field-row">
+        <input type="text" id="person-birth-first-name" placeholder="First" maxlength="80">
+        <input type="text" id="person-birth-last-name" placeholder="Last" maxlength="80">
+      </div>
+    </div>
+    <div class="pf-field"><label>Hebrew name</label><input type="text" id="person-hebrew-name" maxlength="80"></div>
+    <div class="pf-field"><label>Birth date</label><input type="text" id="person-birth-date" placeholder="e.g. 1923 or 4 May 1923"></div>
+    <div class="pf-field"><label>Death date</label><input type="text" id="person-death-date" placeholder="e.g. 1998"></div>
+    <div class="pf-field"><label>Profession</label><input type="text" id="person-profession" maxlength="120"></div>
+    <div class="pf-field"><label>Bio</label><textarea id="person-bio" rows="5" placeholder="Anything worth remembering…"></textarea></div>
+    <div class="pf-field"><label>Parents</label><div id="person-parents-list" class="tag-picker"></div></div>
+    <div class="pf-field"><label>Partners</label><div id="person-partners-list" class="tag-picker"></div></div>
+    <div class="pf-field"><label>Children</label><div id="person-children-list" class="tag-picker"></div></div>
+    <div class="pf-field"><label>Linked documents</label><div id="person-documents-list" class="tag-picker"></div></div>
+    <div id="person-upload-status" class="upload-status"></div>
+    <div class="person-modal-actions">
+      <button id="person-delete-btn" class="text-btn danger-text">Delete person</button>
+      <div class="person-modal-actions-right">
+        <button id="person-cancel-btn" class="ghost-btn">Cancel</button>
+        <button id="person-save-btn" class="solid-btn">Save person</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="person-view-modal-backdrop">
+  <div id="person-view-modal">
+    <div id="person-view-header">
+      <span id="person-view-title">Person</span>
+      <div id="person-view-actions">
+        <button id="person-view-edit-btn" class="ghost-btn" type="button">&#9998; Edit</button>
+        <button id="person-view-close" class="ghost-btn" type="button">Close</button>
+      </div>
+    </div>
+    <div id="person-view-body"></div>
+  </div>
+</div>
 
 <div id="note-modal-backdrop">
   <div id="note-modal" class="upload-modal">
@@ -6790,6 +7107,871 @@
 
   attemptSilentReconnectOnLoad();
 
+})();
+
+
+// ---------------- Family Tree ----------------
+(function(){
+  "use strict";
+  var PEOPLE_KEY = "family-tree-people-v1";
+  var people = [];
+
+  function uid(prefix){ return (prefix||"p") + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  function loadPeople(){
+    try{
+      var raw = localStorage.getItem(PEOPLE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) people = parsed;
+      }
+    }catch(e){ console.error("Could not load family tree:", e); }
+    people.forEach(function(p){
+      if(!Array.isArray(p.parentIds)) p.parentIds = [];
+      if(!Array.isArray(p.partnerIds)) p.partnerIds = [];
+      if(!Array.isArray(p.documentIds)) p.documentIds = [];
+    });
+  }
+  function savePeople(){
+    try{ localStorage.setItem(PEOPLE_KEY, JSON.stringify(people)); return true; }
+    catch(e){ window.appAlert ? appAlert("Couldn't save — your browser storage might be full.") : alert("Couldn't save."); return false; }
+  }
+  loadPeople();
+
+  function extractYear(s){
+    if(!s) return "";
+    var m = String(s).match(/\d{3,4}/);
+    return m ? m[0] : "";
+  }
+  function personLabel(p){
+    var name = ((p.firstName||"") + " " + (p.lastName||"")).trim() || "Unnamed";
+    var by = extractYear(p.birthDate), dy = extractYear(p.deathDate);
+    if(by || dy) name += " (" + (by||"?") + "\u2013" + (dy||"") + ")";
+    return name;
+  }
+  function findPerson(id){ return people.find(function(p){ return p.id === id; }); }
+  function childrenOf(id){ return people.filter(function(p){ return p.parentIds.indexOf(id) !== -1; }); }
+
+  // ---------------- generic relationship/document picker ----------------
+  function renderPersonPicker(container, selectedIds, optionsList, excludeId){
+    container.innerHTML = "";
+    var selected = selectedIds.slice();
+    container._selected = selected;
+    var select = document.createElement("select");
+    select.className = "tag-picker-select";
+    var chipsRow = document.createElement("div");
+    chipsRow.className = "tag-picker-chips";
+    function labelFor(id){ var o = optionsList.find(function(x){ return x.id === id; }); return o ? o.label : null; }
+    function renderChips(){
+      chipsRow.innerHTML = "";
+      if(!selected.length){
+        var none = document.createElement("div");
+        none.className = "tag-picker-empty";
+        none.textContent = "None yet.";
+        chipsRow.appendChild(none);
+        return;
+      }
+      selected.forEach(function(id){
+        var label = labelFor(id);
+        if(!label) return;
+        var chip = document.createElement("span");
+        chip.className = "tag-chip active";
+        var nameSpan = document.createElement("span");
+        nameSpan.textContent = label;
+        var rm = document.createElement("span");
+        rm.className = "tag-edit-icon";
+        rm.textContent = "\u2715";
+        rm.addEventListener("click", function(){
+          selected = selected.filter(function(x){ return x !== id; });
+          container._selected = selected;
+          renderChips(); renderOptions();
+        });
+        chip.appendChild(nameSpan);
+        chip.appendChild(rm);
+        chipsRow.appendChild(chip);
+      });
+    }
+    function renderOptions(){
+      select.innerHTML = "";
+      var placeholder = document.createElement("option");
+      placeholder.value = "";
+      var remaining = optionsList.filter(function(o){ return o.id !== excludeId && selected.indexOf(o.id) === -1; });
+      placeholder.textContent = remaining.length ? "+ Add\u2026" : "No more options";
+      select.appendChild(placeholder);
+      remaining.forEach(function(o){
+        var opt = document.createElement("option");
+        opt.value = o.id;
+        opt.textContent = o.label;
+        select.appendChild(opt);
+      });
+    }
+    select.addEventListener("change", function(){
+      if(select.value){
+        selected.push(select.value);
+        container._selected = selected;
+        renderChips(); renderOptions();
+      }
+    });
+    renderOptions();
+    renderChips();
+    container.appendChild(select);
+    container.appendChild(chipsRow);
+  }
+  function readPicker(container){ return (container._selected || []).slice(); }
+
+  // ---------------- person add/edit modal ----------------
+  var editingPersonId = null;
+  var personModalBackdrop = document.getElementById("person-modal-backdrop");
+  var firstNameInput = document.getElementById("person-first-name");
+  var lastNameInput = document.getElementById("person-last-name");
+  var birthFirstInput = document.getElementById("person-birth-first-name");
+  var birthLastInput = document.getElementById("person-birth-last-name");
+  var hebrewNameInput = document.getElementById("person-hebrew-name");
+  var birthDateInput = document.getElementById("person-birth-date");
+  var deathDateInput = document.getElementById("person-death-date");
+  var professionInput = document.getElementById("person-profession");
+  var bioInput = document.getElementById("person-bio");
+  var parentsList = document.getElementById("person-parents-list");
+  var partnersList = document.getElementById("person-partners-list");
+  var childrenList = document.getElementById("person-children-list");
+  var documentsList = document.getElementById("person-documents-list");
+  var personStatus = document.getElementById("person-upload-status");
+  var personDeleteBtn = document.getElementById("person-delete-btn");
+
+  function openPersonModal(personId){
+    editingPersonId = personId || null;
+    var p = editingPersonId ? findPerson(editingPersonId) : null;
+    document.getElementById("person-modal-title").textContent = p ? "Edit person" : "Add a person";
+    firstNameInput.value = p ? (p.firstName || "") : "";
+    lastNameInput.value = p ? (p.lastName || "") : "";
+    birthFirstInput.value = p && p.birthName ? (p.birthName.first || "") : "";
+    birthLastInput.value = p && p.birthName ? (p.birthName.last || "") : "";
+    hebrewNameInput.value = p ? (p.hebrewName || "") : "";
+    birthDateInput.value = p ? (p.birthDate || "") : "";
+    deathDateInput.value = p ? (p.deathDate || "") : "";
+    professionInput.value = p ? (p.profession || "") : "";
+    bioInput.value = p ? (p.bio || "") : "";
+
+    var peopleOptions = people.filter(function(x){ return !p || x.id !== p.id; }).map(function(x){ return { id: x.id, label: personLabel(x) }; });
+    var docsOptions = (window.__fpDocuments ? window.__fpDocuments.get().documents : []).map(function(d){ return { id: d.id, label: d.name || "Untitled document" }; });
+
+    renderPersonPicker(parentsList, p ? p.parentIds : [], peopleOptions, p ? p.id : null);
+    renderPersonPicker(partnersList, p ? p.partnerIds : [], peopleOptions, p ? p.id : null);
+    renderPersonPicker(childrenList, p ? childrenOf(p.id).map(function(c){ return c.id; }) : [], peopleOptions, p ? p.id : null);
+    renderPersonPicker(documentsList, p ? p.documentIds : [], docsOptions, null);
+
+    personDeleteBtn.style.display = p ? "inline-block" : "none";
+    personStatus.textContent = "";
+    personStatus.className = "upload-status";
+    personModalBackdrop.classList.add("open");
+    setTimeout(function(){ firstNameInput.focus(); }, 30);
+  }
+  function closePersonModal(){
+    personModalBackdrop.classList.remove("open");
+    editingPersonId = null;
+  }
+  document.getElementById("add-person-btn").addEventListener("click", function(){ openPersonModal(null); });
+  document.getElementById("person-cancel-btn").addEventListener("click", closePersonModal);
+  personModalBackdrop.addEventListener("click", function(e){ if(e.target === personModalBackdrop) closePersonModal(); });
+
+  document.getElementById("person-save-btn").addEventListener("click", function(){
+    var first = firstNameInput.value.trim();
+    var last = lastNameInput.value.trim();
+    if(!first && !last){
+      personStatus.textContent = "Give this person at least a first or last name.";
+      personStatus.className = "upload-status error";
+      return;
+    }
+    var parentIds = readPicker(parentsList);
+    var partnerIds = readPicker(partnersList);
+    var childIds = readPicker(childrenList);
+    var docIds = readPicker(documentsList);
+
+    var person = editingPersonId ? findPerson(editingPersonId) : null;
+    var isNewPerson = !person;
+    if(!person){
+      person = { id: uid("person") };
+      people.push(person);
+    }
+    person.firstName = first;
+    person.lastName = last;
+    var bf = birthFirstInput.value.trim(), bl = birthLastInput.value.trim();
+    person.birthName = (bf || bl) ? { first: bf, last: bl } : null;
+    person.hebrewName = hebrewNameInput.value.trim();
+    person.birthDate = birthDateInput.value.trim();
+    person.deathDate = deathDateInput.value.trim();
+    person.profession = professionInput.value.trim();
+    person.bio = bioInput.value;
+    person.parentIds = parentIds;
+    person.partnerIds = partnerIds;
+    person.documentIds = docIds;
+
+    // keep partner links reciprocal
+    people.forEach(function(other){
+      if(other.id === person.id) return;
+      var should = partnerIds.indexOf(other.id) !== -1;
+      var has = other.partnerIds.indexOf(person.id) !== -1;
+      if(should && !has) other.partnerIds.push(person.id);
+      if(!should && has) other.partnerIds = other.partnerIds.filter(function(x){ return x !== person.id; });
+    });
+
+    // sync children list into their parentIds
+    var prevChildIds = childrenOf(person.id).map(function(c){ return c.id; });
+    prevChildIds.forEach(function(cid){
+      if(childIds.indexOf(cid) === -1){
+        var c = findPerson(cid);
+        if(c) c.parentIds = c.parentIds.filter(function(x){ return x !== person.id; });
+      }
+    });
+    childIds.forEach(function(cid){
+      var c = findPerson(cid);
+      if(c && c.parentIds.indexOf(person.id) === -1) c.parentIds.push(person.id);
+    });
+
+    if(savePeople()){
+      if(isNewPerson) focusPersonId = person.id;
+      closePersonModal();
+      renderTree();
+    }
+  });
+
+  personDeleteBtn.addEventListener("click", function(){
+    if(!editingPersonId) return;
+    var p = findPerson(editingPersonId);
+    appConfirm('Delete "' + personLabel(p) + '"? This removes them from the tree and unlinks them from relatives.', function(ok){
+      if(!ok) return;
+      var id = editingPersonId;
+      people = people.filter(function(x){ return x.id !== id; });
+      people.forEach(function(x){
+        x.parentIds = x.parentIds.filter(function(pid){ return pid !== id; });
+        x.partnerIds = x.partnerIds.filter(function(pid){ return pid !== id; });
+      });
+      savePeople();
+      closePersonModal();
+      renderTree();
+    });
+  });
+
+  // ---------------- read-only person viewer ----------------
+  var viewingPersonId = null;
+  var personViewBackdrop = document.getElementById("person-view-modal-backdrop");
+  var personViewTitle = document.getElementById("person-view-title");
+  var personViewBody = document.getElementById("person-view-body");
+
+  function addViewRow(label, val){
+    if(!val) return;
+    var div = document.createElement("div");
+    div.className = "person-view-row";
+    var l = document.createElement("label"); l.textContent = label;
+    var v = document.createElement("div"); v.className = "val"; v.textContent = val;
+    div.appendChild(l); div.appendChild(v);
+    personViewBody.appendChild(div);
+  }
+  function addViewLinkRow(label, ids, onClickEach, textFor){
+    if(!ids || !ids.length) return;
+    var div = document.createElement("div");
+    div.className = "person-view-row";
+    var l = document.createElement("label"); l.textContent = label;
+    var v = document.createElement("div"); v.className = "val";
+    var any = false;
+    ids.forEach(function(id){
+      var text = textFor(id);
+      if(!text) return;
+      any = true;
+      var a = document.createElement("a");
+      a.textContent = text;
+      a.addEventListener("click", function(){ onClickEach(id); });
+      v.appendChild(a);
+    });
+    if(!any) return;
+    div.appendChild(l); div.appendChild(v);
+    personViewBody.appendChild(div);
+  }
+
+  function openPersonViewer(personId){
+    var p = findPerson(personId);
+    if(!p) return;
+    viewingPersonId = personId;
+    personViewTitle.textContent = personLabel(p);
+    personViewBody.innerHTML = "";
+    addViewRow("First name", p.firstName);
+    addViewRow("Last name", p.lastName);
+    if(p.birthName && (p.birthName.first || p.birthName.last)){
+      addViewRow("Name at birth", ((p.birthName.first || "") + " " + (p.birthName.last || "")).trim());
+    }
+    addViewRow("Hebrew name", p.hebrewName);
+    addViewRow("Birth date", p.birthDate);
+    addViewRow("Death date", p.deathDate);
+    addViewRow("Profession", p.profession);
+    addViewRow("Bio", p.bio);
+    addViewLinkRow("Parents", p.parentIds, openPersonViewer, function(id){ var o = findPerson(id); return o ? personLabel(o) : null; });
+    addViewLinkRow("Partners", p.partnerIds, openPersonViewer, function(id){ var o = findPerson(id); return o ? personLabel(o) : null; });
+    addViewLinkRow("Children", childrenOf(p.id).map(function(c){ return c.id; }), openPersonViewer, function(id){ var o = findPerson(id); return o ? personLabel(o) : null; });
+    if(p.documentIds && p.documentIds.length && window.__fpDocuments){
+      var docs = window.__fpDocuments.get().documents;
+      addViewLinkRow("Linked documents", p.documentIds, function(did){
+        if(window.__fpDocumentsApi) window.__fpDocumentsApi.viewDocument(did);
+      }, function(did){
+        var d = docs.find(function(x){ return x.id === did; });
+        return d ? (d.name || "Untitled document") : null;
+      });
+    }
+    personViewBackdrop.classList.add("open");
+  }
+  function closePersonViewer(){
+    personViewBackdrop.classList.remove("open");
+    viewingPersonId = null;
+  }
+  document.getElementById("person-view-close").addEventListener("click", closePersonViewer);
+  personViewBackdrop.addEventListener("click", function(e){ if(e.target === personViewBackdrop) closePersonViewer(); });
+  document.getElementById("person-view-edit-btn").addEventListener("click", function(){
+    var id = viewingPersonId;
+    closePersonViewer();
+    openPersonModal(id);
+  });
+
+  // ---------------- GEDCOM import ----------------
+  function importGedcom(text){
+    var lines = text.split(/\r\n|\r|\n/);
+    var indiMap = {}, famMap = {};
+    var curIndi = null, curFam = null, curTag = null;
+    var indiCounter = 0, famCounter = 0;
+
+    lines.forEach(function(raw){
+      var line = raw.trim();
+      if(!line) return;
+      var m = line.match(/^(\d+)\s+(@\S+@)?\s*([A-Za-z_]+)(.*)$/);
+      if(!m) return;
+      var level = parseInt(m[1], 10);
+      var xref = m[2];
+      var tag = m[3];
+      var value = (m[4] || "").trim();
+
+      if(level === 0){
+        curIndi = null; curFam = null; curTag = null;
+        if(value === "INDI" || tag === "INDI"){
+          var iid = xref || ("I" + (indiCounter++));
+          indiMap[iid] = { names: [], birt: null, deat: null, occu: null };
+          curIndi = indiMap[iid];
+        } else if(value === "FAM" || tag === "FAM"){
+          var fid = xref || ("F" + (famCounter++));
+          famMap[fid] = { husb: null, wife: null, chil: [] };
+          curFam = famMap[fid];
+        }
+        return;
+      }
+      if(level === 1){
+        curTag = tag;
+        if(curIndi){
+          if(tag === "NAME") curIndi.names.push(value);
+          else if(tag === "OCCU") curIndi.occu = value;
+        } else if(curFam){
+          if(tag === "HUSB") curFam.husb = value;
+          else if(tag === "WIFE") curFam.wife = value;
+          else if(tag === "CHIL") curFam.chil.push(value);
+        }
+        return;
+      }
+      if(level === 2 && curIndi){
+        if(curTag === "BIRT" && tag === "DATE") curIndi.birt = value;
+        if(curTag === "DEAT" && tag === "DATE") curIndi.deat = value;
+      }
+    });
+
+    var gedToLocal = {}, created = 0;
+    Object.keys(indiMap).forEach(function(gid){
+      var raw = indiMap[gid];
+      var nameStr = raw.names[0] || "";
+      var parts = nameStr.split("/");
+      var first = (parts[0] || "").trim();
+      var last = (parts[1] || "").trim();
+      var person = {
+        id: uid("person"),
+        firstName: first,
+        lastName: last,
+        birthName: null,
+        hebrewName: "",
+        birthDate: raw.birt || "",
+        deathDate: raw.deat || "",
+        profession: raw.occu || "",
+        bio: "",
+        parentIds: [],
+        partnerIds: [],
+        documentIds: []
+      };
+      people.push(person);
+      gedToLocal[gid] = person.id;
+      created++;
+    });
+
+    Object.keys(famMap).forEach(function(fid){
+      var fam = famMap[fid];
+      var husbId = fam.husb ? gedToLocal[fam.husb] : null;
+      var wifeId = fam.wife ? gedToLocal[fam.wife] : null;
+      if(husbId && wifeId){
+        var h = findPerson(husbId), w = findPerson(wifeId);
+        if(h && h.partnerIds.indexOf(wifeId) === -1) h.partnerIds.push(wifeId);
+        if(w && w.partnerIds.indexOf(husbId) === -1) w.partnerIds.push(husbId);
+      }
+      fam.chil.forEach(function(cgid){
+        var cid = gedToLocal[cgid];
+        var c = findPerson(cid);
+        if(!c) return;
+        if(husbId && c.parentIds.indexOf(husbId) === -1) c.parentIds.push(husbId);
+        if(wifeId && c.parentIds.indexOf(wifeId) === -1) c.parentIds.push(wifeId);
+      });
+    });
+
+    return created;
+  }
+
+  var gedcomInput = document.getElementById("gedcom-file-input");
+  var gedcomStatus = document.getElementById("gedcom-import-status");
+  gedcomInput.addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    gedcomInput.value = "";
+    if(!file) return;
+    gedcomStatus.textContent = "Reading file\u2026";
+    gedcomStatus.className = "upload-status";
+    var reader = new FileReader();
+    reader.onload = function(evt){
+      try{
+        var count = importGedcom(evt.target.result);
+        savePeople();
+        renderTree();
+        gedcomStatus.textContent = "Imported " + count + " " + (count === 1 ? "person" : "people") + ".";
+        gedcomStatus.className = "upload-status";
+      }catch(err){
+        console.error(err);
+        gedcomStatus.textContent = "Couldn't read that GEDCOM file.";
+        gedcomStatus.className = "upload-status error";
+      }
+    };
+    reader.onerror = function(){
+      gedcomStatus.textContent = "Couldn't read that file.";
+      gedcomStatus.className = "upload-status error";
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------------- tree rendering ----------------
+  var treeSvg = document.getElementById("tree-svg");
+  var treeLayer = document.getElementById("tree-layer");
+  var treeEmptyState = document.getElementById("familytree-empty-state");
+  var treeMain = document.getElementById("familytree-main");
+
+  var focusPersonId = null;
+  var genUp = 2, genDown = 2;
+  var activeActionsPersonId = null;
+
+  function computeVisibleSet(focusId){
+    var visible = {}, levelOf = {};
+    var focus = findPerson(focusId);
+    if(!focus) return { visible: visible, levelOf: levelOf };
+    visible[focusId] = true; levelOf[focusId] = 0;
+    (focus.partnerIds || []).forEach(function(pid){ if(findPerson(pid)){ visible[pid] = true; levelOf[pid] = 0; } });
+
+    var frontier = [focusId];
+    for(var u = 1; u <= genUp; u++){
+      var next = [];
+      frontier.forEach(function(id){
+        var p = findPerson(id);
+        if(!p) return;
+        (p.parentIds || []).forEach(function(pid){
+          if(!findPerson(pid)) return;
+          if(!visible[pid]){ visible[pid] = true; levelOf[pid] = -u; }
+          if(next.indexOf(pid) === -1) next.push(pid);
+        });
+      });
+      frontier = next;
+    }
+    Object.keys(visible).slice().forEach(function(id){
+      if(levelOf[id] >= 0) return;
+      var p = findPerson(id);
+      (p.partnerIds || []).forEach(function(pid){
+        if(findPerson(pid) && !visible[pid]){ visible[pid] = true; levelOf[pid] = levelOf[id]; }
+      });
+    });
+
+    frontier = [focusId];
+    for(var d = 1; d <= genDown; d++){
+      var next2 = [];
+      frontier.forEach(function(id){
+        childrenOf(id).forEach(function(c){
+          if(!visible[c.id]){ visible[c.id] = true; levelOf[c.id] = d; }
+          if(next2.indexOf(c.id) === -1) next2.push(c.id);
+        });
+      });
+      frontier = next2;
+    }
+    Object.keys(visible).slice().forEach(function(id){
+      if(!(levelOf[id] > 0)) return;
+      var p = findPerson(id);
+      (p.partnerIds || []).forEach(function(pid){
+        if(findPerson(pid) && !visible[pid]){ visible[pid] = true; levelOf[pid] = levelOf[id]; }
+      });
+    });
+
+    if(genUp >= 1){
+      (focus.parentIds || []).forEach(function(parId){
+        childrenOf(parId).forEach(function(sib){
+          if(!visible[sib.id]){ visible[sib.id] = true; levelOf[sib.id] = 0; }
+        });
+      });
+    }
+    if(genUp >= 2){
+      var grandparentIds = [];
+      (focus.parentIds || []).forEach(function(parId){
+        var par = findPerson(parId);
+        if(par) grandparentIds = grandparentIds.concat(par.parentIds || []);
+      });
+      grandparentIds.forEach(function(gpId){
+        childrenOf(gpId).forEach(function(auntUncle){
+          if((focus.parentIds || []).indexOf(auntUncle.id) !== -1) return;
+          if(!visible[auntUncle.id]){ visible[auntUncle.id] = true; levelOf[auntUncle.id] = -1; }
+          (auntUncle.partnerIds || []).forEach(function(pid){
+            if(findPerson(pid) && !visible[pid]){ visible[pid] = true; levelOf[pid] = -1; }
+          });
+          childrenOf(auntUncle.id).forEach(function(cousin){
+            if(!visible[cousin.id]){ visible[cousin.id] = true; levelOf[cousin.id] = 0; }
+          });
+        });
+      });
+    }
+    return { visible: visible, levelOf: levelOf };
+  }
+
+  function layoutTree(visible, levelOf){
+    var NODE_W = 170, NODE_H = 76, GAP_X = 26, PARTNER_GAP = 8, GAP_Y = 130;
+    var levels = {};
+    Object.keys(visible).forEach(function(id){
+      var lvl = levelOf[id];
+      if(!levels[lvl]) levels[lvl] = [];
+      levels[lvl].push(id);
+    });
+    var levelNums = Object.keys(levels).map(Number).sort(function(a, b){ return a - b; });
+    var positions = {};
+
+    levelNums.forEach(function(lvl){
+      var row = levels[lvl];
+      var used = {}, units = [];
+      row.forEach(function(id){
+        if(used[id]) return;
+        var p = findPerson(id);
+        var unit = [id];
+        used[id] = true;
+        (p.partnerIds || []).forEach(function(pid){
+          if(row.indexOf(pid) !== -1 && !used[pid]){ unit.push(pid); used[pid] = true; }
+        });
+        units.push(unit);
+      });
+      units.forEach(function(unit){
+        var parentXs = [];
+        unit.forEach(function(id){
+          (findPerson(id).parentIds || []).forEach(function(pid){
+            if(positions[pid]) parentXs.push(positions[pid].x);
+          });
+        });
+        unit._sortKey = parentXs.length ? (parentXs.reduce(function(a, b){ return a + b; }, 0) / parentXs.length) : null;
+      });
+      var withKey = units.filter(function(u){ return u._sortKey !== null; }).sort(function(a, b){ return a._sortKey - b._sortKey; });
+      var withoutKey = units.filter(function(u){ return u._sortKey === null; }).sort(function(a, b){
+        return personLabel(findPerson(a[0])).localeCompare(personLabel(findPerson(b[0])));
+      });
+      var ordered = withKey.concat(withoutKey);
+
+      var y = lvl * (NODE_H + GAP_Y);
+      var x = 0;
+      ordered.forEach(function(unit){
+        var unitStartX = x;
+        unit.forEach(function(id, i){
+          positions[id] = { x: x, y: y };
+          x += NODE_W + (i < unit.length - 1 ? PARTNER_GAP : 0);
+        });
+        var unitEndX = x - NODE_W;
+        var centerX = (unitStartX + unitEndX + NODE_W) / 2;
+        unit.forEach(function(id){ positions[id].unitCenterX = centerX; positions[id].unitIds = unit; });
+        x += GAP_X;
+      });
+    });
+    return { positions: positions, NODE_W: NODE_W, NODE_H: NODE_H };
+  }
+
+  function drawConnectors(el, positions, NODE_W, NODE_H, visible){
+    var drawnUnits = {};
+    Object.keys(visible).forEach(function(id){
+      var pos = positions[id];
+      if(!pos || !pos.unitIds) return;
+      var unitKey = pos.unitIds.slice().sort().join(",");
+      if(drawnUnits[unitKey]) return;
+      drawnUnits[unitKey] = true;
+
+      if(pos.unitIds.length === 2){
+        var a = positions[pos.unitIds[0]], b = positions[pos.unitIds[1]];
+        var my = a.y + NODE_H / 2;
+        var mx1 = Math.min(a.x, b.x) + NODE_W, mx2 = Math.max(a.x, b.x);
+        treeLayer.appendChild(el("line", { x1: mx1, y1: my, x2: mx2, y2: my, class: "tree-link-partner" }));
+      }
+
+      var childIds = [];
+      pos.unitIds.forEach(function(pid){
+        childrenOf(pid).forEach(function(c){
+          if(visible[c.id] && positions[c.id] && childIds.indexOf(c.id) === -1) childIds.push(c.id);
+        });
+      });
+      if(!childIds.length) return;
+
+      var centerX = pos.unitCenterX;
+      var busY = pos.y + NODE_H + 34;
+
+      if(childIds.length === 1){
+        // single child: draw a direct curve, no shared horizontal bus that could
+        // visually merge with a neighboring family's sibling row at the same y
+        var cx = positions[childIds[0]].x + NODE_W / 2;
+        var cy = positions[childIds[0]].y;
+        var y1 = pos.y + NODE_H;
+        var midY = (y1 + cy) / 2;
+        treeLayer.appendChild(el("path", {
+          d: "M" + centerX + "," + y1 + " C " + centerX + "," + midY + " " + cx + "," + midY + " " + cx + "," + cy,
+          class: "tree-link"
+        }));
+        return;
+      }
+
+      var childXs = childIds.map(function(cid){ return positions[cid].x + NODE_W / 2; });
+      var minX = Math.min(centerX, Math.min.apply(null, childXs));
+      var maxX = Math.max(centerX, Math.max.apply(null, childXs));
+
+      treeLayer.appendChild(el("line", { x1: centerX, y1: pos.y + NODE_H, x2: centerX, y2: busY, class: "tree-link" }));
+      treeLayer.appendChild(el("line", { x1: minX, y1: busY, x2: maxX, y2: busY, class: "tree-link" }));
+      childIds.forEach(function(cid){
+        var cx = positions[cid].x + NODE_W / 2;
+        treeLayer.appendChild(el("line", { x1: cx, y1: busY, x2: cx, y2: positions[cid].y, class: "tree-link" }));
+      });
+    });
+  }
+
+  function renderTree(keepView){
+    treeLayer.innerHTML = "";
+    if(people.length === 0){
+      treeEmptyState.classList.add("show");
+      return;
+    }
+    treeEmptyState.classList.remove("show");
+    if(!focusPersonId || !findPerson(focusPersonId)) focusPersonId = people[0].id;
+
+    var showAll = treeMain.classList.contains("show-all");
+    var visible, levelOf;
+    if(showAll){
+      visible = {}; levelOf = {};
+      var genCache = {};
+      function generationOf(id, seen){
+        if(genCache.hasOwnProperty(id)) return genCache[id];
+        seen = seen || {};
+        if(seen[id]) return 0;
+        seen[id] = true;
+        var p = findPerson(id);
+        if(!p || !p.parentIds.length){ genCache[id] = 0; return 0; }
+        var maxG = -1;
+        p.parentIds.forEach(function(pid){ if(findPerson(pid)) maxG = Math.max(maxG, generationOf(pid, seen)); });
+        var g = maxG + 1; genCache[id] = g; return g;
+      }
+      people.forEach(function(p){ visible[p.id] = true; levelOf[p.id] = generationOf(p.id); });
+    } else {
+      var res = computeVisibleSet(focusPersonId);
+      visible = res.visible; levelOf = res.levelOf;
+    }
+
+    var q = (document.getElementById("tree-search").value || "").trim().toLowerCase();
+    var matchIds = q ? people.filter(function(p){ return personLabel(p).toLowerCase().indexOf(q) !== -1; }).map(function(p){ return p.id; }) : null;
+
+    var layout = layoutTree(visible, levelOf);
+    var positions = layout.positions, NODE_W = layout.NODE_W, NODE_H = layout.NODE_H;
+
+    var maxX = 0, maxY = 0, minX = 0;
+    Object.keys(positions).forEach(function(id){
+      maxX = Math.max(maxX, positions[id].x + NODE_W);
+      maxY = Math.max(maxY, positions[id].y + NODE_H);
+      minX = Math.min(minX, positions[id].x);
+    });
+    var existingViewBox = treeSvg.getAttribute("viewBox");
+    if(keepView && existingViewBox){
+      var cur = currentViewBox();
+      var focusPos = positions[focusPersonId];
+      var cx = focusPos ? (focusPos.x + NODE_W / 2) : (minX + maxX) / 2;
+      var cy = focusPos ? (focusPos.y + NODE_H / 2) : maxY / 2;
+      treeSvg.setAttribute("viewBox", (cx - cur.w / 2) + " " + (cy - cur.h / 2) + " " + cur.w + " " + cur.h);
+    } else {
+      var vbW = Math.max(900, maxX - minX + 80);
+      var vbH = Math.max(600, maxY + 80);
+      treeSvg.setAttribute("viewBox", (minX - 40) + " -40 " + vbW + " " + vbH);
+    }
+
+    var ns = "http://www.w3.org/2000/svg";
+    function el(tag, attrs){
+      var e = document.createElementNS(ns, tag);
+      Object.keys(attrs || {}).forEach(function(k){ e.setAttribute(k, attrs[k]); });
+      return e;
+    }
+
+    drawConnectors(el, positions, NODE_W, NODE_H, visible);
+
+    function splitNameForBox(name){
+      if(name.length <= 18) return [name];
+      var words = name.split(" ");
+      if(words.length === 1){
+        return [name.slice(0, 16) + "-", name.slice(16, 32)];
+      }
+      var bestIdx = 1, bestScore = Infinity;
+      for(var i = 1; i < words.length; i++){
+        var l1 = words.slice(0, i).join(" ");
+        var l2 = words.slice(i).join(" ");
+        var score = Math.max(l1.length, l2.length);
+        if(score < bestScore){ bestScore = score; bestIdx = i; }
+      }
+      var line1 = words.slice(0, bestIdx).join(" ");
+      var line2 = words.slice(bestIdx).join(" ");
+      if(line1.length > 18) line1 = line1.slice(0, 17) + "\u2026";
+      if(line2.length > 18) line2 = line2.slice(0, 17) + "\u2026";
+      return [line1, line2];
+    }
+
+    Object.keys(visible).forEach(function(id){
+      var p = findPerson(id);
+      var pos = positions[id];
+      if(!p || !pos) return;
+      var dim = matchIds && matchIds.indexOf(id) === -1;
+      var g = el("g", { transform: "translate(" + pos.x + "," + pos.y + ")", opacity: dim ? 0.3 : 1 });
+      var name = ((p.firstName || "") + " " + (p.lastName || "")).trim() || "Unnamed";
+      var nameLines = splitNameForBox(name);
+      var by = extractYear(p.birthDate), dy = extractYear(p.deathDate);
+      var years = (by || dy) ? ((by || "?") + "\u2013" + (dy || "")) : "";
+      g.appendChild(el("rect", { width: NODE_W, height: NODE_H, class: "tree-node-box" + (id === focusPersonId ? " focused" : "") }));
+      if(nameLines.length === 1){
+        var nameEl = el("text", { x: NODE_W / 2, y: 28, "text-anchor": "middle", class: "tree-node-name" });
+        nameEl.textContent = nameLines[0];
+        g.appendChild(nameEl);
+        var yearsEl = el("text", { x: NODE_W / 2, y: 48, "text-anchor": "middle", class: "tree-node-years" });
+        yearsEl.textContent = years;
+        g.appendChild(yearsEl);
+      } else {
+        var line1El = el("text", { x: NODE_W / 2, y: 18, "text-anchor": "middle", class: "tree-node-name" });
+        line1El.textContent = nameLines[0];
+        var line2El = el("text", { x: NODE_W / 2, y: 34, "text-anchor": "middle", class: "tree-node-name" });
+        line2El.textContent = nameLines[1];
+        g.appendChild(line1El);
+        g.appendChild(line2El);
+        var yearsEl2 = el("text", { x: NODE_W / 2, y: 54, "text-anchor": "middle", class: "tree-node-years" });
+        yearsEl2.textContent = years;
+        g.appendChild(yearsEl2);
+      }
+      g.style.cursor = "pointer";
+      g.addEventListener("click", function(e){
+        e.stopPropagation();
+        focusPersonId = id;
+        activeActionsPersonId = id;
+        renderTree(true);
+      });
+      if(activeActionsPersonId === id){
+        var ag = el("g", { transform: "translate(0," + (NODE_H + 6) + ")", "class": "tree-node-actions" });
+        var half = (NODE_W - 6) / 2;
+        var viewBtn = el("g", {});
+        viewBtn.appendChild(el("rect", { x: 0, y: 0, width: half, height: 24 }));
+        var vt = el("text", { x: half / 2, y: 16 }); vt.textContent = "View";
+        viewBtn.appendChild(vt);
+        viewBtn.addEventListener("click", function(e){ e.stopPropagation(); openPersonViewer(id); });
+        var editBtn = el("g", { transform: "translate(" + (half + 6) + ",0)" });
+        editBtn.appendChild(el("rect", { x: 0, y: 0, width: half, height: 24 }));
+        var et = el("text", { x: half / 2, y: 16 }); et.textContent = "Edit";
+        editBtn.appendChild(et);
+        editBtn.addEventListener("click", function(e){ e.stopPropagation(); openPersonModal(id); });
+        ag.appendChild(viewBtn);
+        ag.appendChild(editBtn);
+        g.appendChild(ag);
+      }
+      treeLayer.appendChild(g);
+    });
+  }
+  document.getElementById("tree-search").addEventListener("input", function(){
+    var q = this.value.trim().toLowerCase();
+    if(q){
+      var matches = people.filter(function(p){ return personLabel(p).toLowerCase().indexOf(q) !== -1; });
+      if(matches.length === 1){
+        focusPersonId = matches[0].id;
+        activeActionsPersonId = null;
+      }
+    }
+    renderTree();
+  });
+  function updateGenLabel(){ document.getElementById("tree-gen-value").textContent = genUp; }
+  document.getElementById("tree-gen-minus").addEventListener("click", function(){
+    genUp = Math.max(0, genUp - 1);
+    genDown = Math.max(0, genDown - 1);
+    updateGenLabel();
+    renderTree();
+  });
+  document.getElementById("tree-gen-plus").addEventListener("click", function(){
+    genUp = Math.min(6, genUp + 1);
+    genDown = Math.min(6, genDown + 1);
+    updateGenLabel();
+    renderTree();
+  });
+  document.getElementById("tree-show-all-btn").addEventListener("click", function(){
+    treeMain.classList.toggle("show-all");
+    this.textContent = treeMain.classList.contains("show-all") ? "Focus on one person" : "Show everyone";
+    renderTree();
+  });
+
+  // ---------------- pan & zoom ----------------
+  function currentViewBox(){
+    var parts = treeSvg.getAttribute("viewBox").split(" ").map(Number);
+    return { x: parts[0], y: parts[1], w: parts[2], h: parts[3] };
+  }
+  function setViewBox(vb){ treeSvg.setAttribute("viewBox", vb.x + " " + vb.y + " " + vb.w + " " + vb.h); }
+  var panning = false, panStart = null, viewStart = null, panMoved = false;
+  treeSvg.addEventListener("mousedown", function(e){
+    panning = true;
+    panMoved = false;
+    panStart = { x: e.clientX, y: e.clientY };
+    viewStart = currentViewBox();
+    treeSvg.classList.add("panning");
+  });
+  window.addEventListener("mousemove", function(e){
+    if(!panning) return;
+    if(Math.abs(e.clientX - panStart.x) > 3 || Math.abs(e.clientY - panStart.y) > 3) panMoved = true;
+    var rect = treeSvg.getBoundingClientRect();
+    var scale = viewStart.w / rect.width;
+    setViewBox({
+      x: viewStart.x - (e.clientX - panStart.x) * scale,
+      y: viewStart.y - (e.clientY - panStart.y) * scale,
+      w: viewStart.w, h: viewStart.h
+    });
+  });
+  window.addEventListener("mouseup", function(){ panning = false; treeSvg.classList.remove("panning"); });
+  treeSvg.addEventListener("click", function(){
+    if(panMoved) return;
+    if(activeActionsPersonId){ activeActionsPersonId = null; renderTree(); }
+  });
+  treeSvg.addEventListener("wheel", function(e){
+    e.preventDefault();
+    var vb = currentViewBox();
+    var factor = e.deltaY > 0 ? 1.1 : 0.9;
+    var newW = Math.max(300, Math.min(8000, vb.w * factor));
+    var newH = newW * (vb.h / vb.w);
+    setViewBox({ x: vb.x + (vb.w - newW) / 2, y: vb.y + (vb.h - newH) / 2, w: newW, h: newH });
+  }, { passive: false });
+  document.getElementById("tree-zoom-in").addEventListener("click", function(){
+    var vb = currentViewBox();
+    var newW = Math.max(300, vb.w * 0.8), newH = newW * (vb.h / vb.w);
+    setViewBox({ x: vb.x + (vb.w - newW) / 2, y: vb.y + (vb.h - newH) / 2, w: newW, h: newH });
+  });
+  document.getElementById("tree-zoom-out").addEventListener("click", function(){
+    var vb = currentViewBox();
+    var newW = Math.min(8000, vb.w * 1.25), newH = newW * (vb.h / vb.w);
+    setViewBox({ x: vb.x + (vb.w - newW) / 2, y: vb.y + (vb.h - newH) / 2, w: newW, h: newH });
+  });
+
+  renderTree();
 })();
 
 
