@@ -8131,13 +8131,15 @@
     });
 
     function familyKeyFor(unit){
-      var pids = [];
-      unit.forEach(function(id){
-        (findPerson(id).parentIds || []).forEach(function(pid){
-          if(pids.indexOf(pid) === -1) pids.push(pid);
-        });
-      });
-      return pids.length ? pids.sort().join(",") : null;
+      // A couple should be grouped under ONE real parent-couple, not a blend of
+      // both partners' families - unioning both would invent a fake "4-parent"
+      // family for a married-in spouse and scramble the layout. Prefer whichever
+      // unit member actually has recorded parents.
+      for(var i = 0; i < unit.length; i++){
+        var pids = findPerson(unit[i]).parentIds || [];
+        if(pids.length) return pids.slice().sort().join(",");
+      }
+      return null;
     }
 
     // Places every level top-down. Units whose parents share the same family are
@@ -8403,6 +8405,13 @@
       if(hasHiddenParents){
         g.appendChild(el("line", {
           x1: NODE_W / 2, y1: -18, x2: NODE_W / 2, y2: 0,
+          class: "tree-hidden-ancestors-hint"
+        }));
+      }
+      var hasHiddenChildren = childrenOf(id).some(function(c){ return !visible[c.id]; });
+      if(hasHiddenChildren){
+        g.appendChild(el("line", {
+          x1: NODE_W / 2, y1: NODE_H, x2: NODE_W / 2, y2: NODE_H + 18,
           class: "tree-hidden-ancestors-hint"
         }));
       }
