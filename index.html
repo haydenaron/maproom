@@ -65,6 +65,64 @@
   .tab-btn:hover{color:var(--ink);}
   .tab-btn.active{color:var(--brass); border-bottom-color:var(--brass);}
   .tab-bar-spacer{flex:1;}
+  #global-search-wrap{ position:relative; margin-right:14px; }
+  #global-search-input{
+    width:210px;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    color:var(--ink);
+    padding:7px 12px;
+    border-radius:14px;
+    font-family:'Spectral', serif;
+    font-size:13px;
+    transition:width .15s;
+  }
+  #global-search-input:focus{ outline:none; border-color:var(--brass); width:290px; }
+  #global-search-results{
+    display:none;
+    position:absolute;
+    top:100%; right:0;
+    width:380px;
+    max-height:min(70vh, 460px);
+    overflow-y:auto;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    margin-top:8px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.45);
+    z-index:300;
+  }
+  #global-search-results.show{ display:block; }
+  .gsr-group-label{
+    padding:9px 12px 5px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-muted);
+    border-top:1px solid var(--panel-border);
+  }
+  .gsr-group-label:first-child{ border-top:none; }
+  .gsr-row{
+    padding:9px 12px;
+    cursor:pointer;
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .gsr-row:hover{ background:rgba(201,162,39,0.12); color:var(--brass); }
+  .gsr-row .gsr-sub{
+    display:block;
+    font-size:11.5px;
+    color:var(--ink-muted);
+    margin-top:2px;
+  }
+  .gsr-empty{
+    padding:20px 16px;
+    text-align:center;
+    color:var(--ink-muted);
+    font-style:italic;
+    font-size:13px;
+  }
   .backup-btn{
     background:transparent;
     border:1px solid var(--panel-border);
@@ -1695,6 +1753,51 @@
     font-style:italic;
     font-size:13px;
   }
+  #pdf-view-citation-row{
+    display:none;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--panel-border);
+  }
+  #pdf-view-citation-content{
+    white-space:pre-wrap;
+    font-size:13px;
+    line-height:1.6;
+    color:var(--ink-muted);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  #pdf-view-location-row{
+    display:none;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--panel-border);
+  }
+  #pdf-view-location-content{
+    font-size:14px;
+    line-height:1.6;
+    color:var(--ink);
+  }
+  #pdf-view-addmap-row{
+    display:none;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid var(--panel-border);
+  }
+  #pdf-view-addmap-content{
+    font-size:13.5px;
+    line-height:1.8;
+  }
+  #pdf-view-addmap-content a{
+    color:var(--brass);
+    cursor:pointer;
+    text-decoration:underline;
+    margin-right:12px;
+  }
+  #pdf-view-addmap-content .empty{
+    color:var(--ink-muted);
+    font-style:italic;
+    font-size:13px;
+  }
 
   #app-dialog-backdrop{
     display:none;
@@ -1933,6 +2036,66 @@
     padding:0 4px;
   }
   .place-row .place-remove-btn:hover{ color:var(--danger); }
+  .place-row-wrap{ margin-bottom:12px; }
+  .place-row-wrap .place-row{ margin-bottom:5px; }
+  .place-notes-input{
+    width:100%;
+    background:var(--ocean);
+    border:1px solid var(--panel-border);
+    color:var(--ink-muted);
+    padding:7px 10px;
+    border-radius:3px;
+    font-family:'Spectral', serif;
+    font-size:13px;
+  }
+
+  #person-modal-tabs{
+    display:flex;
+    gap:4px;
+    margin:-4px 0 16px;
+    border-bottom:1px solid var(--panel-border);
+  }
+  .person-modal-tab-btn{
+    background:none;
+    border:none;
+    color:var(--ink-muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:10px 14px;
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+  }
+  .person-modal-tab-btn:hover{ color:var(--ink); }
+  .person-modal-tab-btn.active{ color:var(--brass); border-bottom-color:var(--brass); }
+  .person-modal-tab-content{ display:none; }
+  .person-modal-tab-content.active{ display:block; }
+
+  .date-approx-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .date-approx-row input[type="text"]{ flex:1; }
+  .approx-checkbox-label{
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    color:var(--ink-muted);
+    white-space:nowrap;
+    cursor:pointer;
+  }
+  .approx-checkbox-label input{ cursor:pointer; }
+
+  .tree-hidden-ancestors-hint{
+    stroke:var(--ink-muted);
+    stroke-width:1.5;
+    stroke-dasharray:3,3;
+    fill:none;
+  }
 
   #tree-search-results{
     display:none;
@@ -1975,23 +2138,22 @@
   #person-view-modal-backdrop{
     display:none;
     position:fixed;
-    inset:0;
-    background:rgba(6,12,18,0.85);
+    top:46px; right:0; bottom:0;
+    width:400px;
+    max-width:92vw;
+    background:var(--panel);
+    border-left:1px solid var(--panel-border);
+    box-shadow:-14px 0 36px rgba(0,0,0,0.45);
     z-index:150;
-    align-items:center;
-    justify-content:center;
+    flex-direction:column;
   }
   #person-view-modal-backdrop.open{display:flex;}
   #person-view-modal{
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:8px;
-    width:640px;
-    max-width:92vw;
-    max-height:88vh;
+    background:transparent;
+    width:100%;
+    height:100%;
     display:flex;
     flex-direction:column;
-    box-shadow:0 20px 60px rgba(0,0,0,0.55);
     overflow:hidden;
   }
   #person-view-header{
@@ -2002,6 +2164,7 @@
     padding:14px 18px;
     border-bottom:1px solid var(--panel-border);
     flex:none;
+    flex-wrap:wrap;
   }
   #person-view-title{
     font-family:'Playfair Display', serif;
@@ -2009,7 +2172,7 @@
     font-weight:600;
     color:var(--brass);
   }
-  #person-view-actions{ display:flex; gap:8px; flex:none; }
+  #person-view-actions{ display:flex; gap:8px; flex:none; flex-wrap:wrap; }
   #person-view-body{
     padding:20px 22px;
     overflow-y:auto;
@@ -2421,6 +2584,10 @@
   <button class="tab-btn" data-page="page-notes">Family Notes</button>
   <button class="tab-btn" data-page="page-tree">Family Tree</button>
   <div class="tab-bar-spacer"></div>
+  <div id="global-search-wrap">
+    <input type="text" id="global-search-input" placeholder="Search everything…" autocomplete="off">
+    <div id="global-search-results"></div>
+  </div>
   <span id="drive-sync-status"></span>
   <button id="drive-connect-btn" class="backup-btn" title="Sync your data through Google Drive">&#9729; Connect Google Drive</button>
   <button id="backup-export-btn" class="backup-btn" title="Download all your data as a backup file">&#8681; Download backup</button>
@@ -2542,28 +2709,46 @@
 <div id="person-modal-backdrop">
   <div id="person-modal" class="upload-modal">
     <h2 id="person-modal-title">Add a person</h2>
-    <div class="pf-field"><label>First name</label><input type="text" id="person-first-name" maxlength="80"></div>
-    <div class="pf-field"><label>Last name</label><input type="text" id="person-last-name" maxlength="80"></div>
-    <div class="pf-field"><label>Name at birth (if different)</label>
-      <div class="file-field-row">
-        <input type="text" id="person-birth-first-name" placeholder="First" maxlength="80">
-        <input type="text" id="person-birth-last-name" placeholder="Last" maxlength="80">
+    <div id="person-modal-tabs">
+      <button type="button" class="person-modal-tab-btn active" data-tab="person-tab-details">Details</button>
+      <button type="button" class="person-modal-tab-btn" data-tab="person-tab-timeline">Timeline</button>
+    </div>
+    <div id="person-tab-details" class="person-modal-tab-content active">
+      <div class="pf-field"><label>First name</label><input type="text" id="person-first-name" maxlength="80"></div>
+      <div class="pf-field"><label>Last name</label><input type="text" id="person-last-name" maxlength="80"></div>
+      <div class="pf-field"><label>Name at birth (if different)</label>
+        <div class="file-field-row">
+          <input type="text" id="person-birth-first-name" placeholder="First" maxlength="80">
+          <input type="text" id="person-birth-last-name" placeholder="Last" maxlength="80">
+        </div>
+      </div>
+      <div class="pf-field"><label>Hebrew name</label><input type="text" id="person-hebrew-name" maxlength="80"></div>
+      <div class="pf-field"><label>Birth date</label>
+        <div class="date-approx-row">
+          <input type="text" id="person-birth-date" placeholder="e.g. 1923 or 4 May 1923">
+          <label class="approx-checkbox-label"><input type="checkbox" id="person-birth-date-approx"> Approximate</label>
+        </div>
+      </div>
+      <div class="pf-field"><label>Death date</label>
+        <div class="date-approx-row">
+          <input type="text" id="person-death-date" placeholder="e.g. 1998">
+          <label class="approx-checkbox-label"><input type="checkbox" id="person-death-date-approx"> Approximate</label>
+        </div>
+      </div>
+      <div class="pf-field"><label>Profession</label><input type="text" id="person-profession" maxlength="120"></div>
+      <div class="pf-field"><label>Bio</label><textarea id="person-bio" rows="5" placeholder="Anything worth remembering…"></textarea></div>
+      <div class="pf-field"><label>Parents</label><div id="person-parents-list" class="tag-picker"></div></div>
+      <div class="pf-field"><label>Partners</label><div id="person-partners-list" class="tag-picker"></div></div>
+      <div class="pf-field"><label>Children</label><div id="person-children-list" class="tag-picker"></div></div>
+      <div class="pf-field"><label>Linked documents</label><div id="person-documents-list" class="tag-picker"></div></div>
+    </div>
+    <div id="person-tab-timeline" class="person-modal-tab-content">
+      <div class="pf-field">
+        <label>Places lived</label>
+        <div id="person-places-list"></div>
+        <button id="person-place-add-btn" class="ghost-full-btn full-btn" type="button" style="margin-top:6px;">+ Add a place</button>
       </div>
     </div>
-    <div class="pf-field"><label>Hebrew name</label><input type="text" id="person-hebrew-name" maxlength="80"></div>
-    <div class="pf-field"><label>Birth date</label><input type="text" id="person-birth-date" placeholder="e.g. 1923 or 4 May 1923"></div>
-    <div class="pf-field"><label>Death date</label><input type="text" id="person-death-date" placeholder="e.g. 1998"></div>
-    <div class="pf-field"><label>Profession</label><input type="text" id="person-profession" maxlength="120"></div>
-    <div class="pf-field"><label>Bio</label><textarea id="person-bio" rows="5" placeholder="Anything worth remembering…"></textarea></div>
-    <div class="pf-field">
-      <label>Places lived</label>
-      <div id="person-places-list"></div>
-      <button id="person-place-add-btn" class="ghost-full-btn full-btn" type="button" style="margin-top:6px;">+ Add a place</button>
-    </div>
-    <div class="pf-field"><label>Parents</label><div id="person-parents-list" class="tag-picker"></div></div>
-    <div class="pf-field"><label>Partners</label><div id="person-partners-list" class="tag-picker"></div></div>
-    <div class="pf-field"><label>Children</label><div id="person-children-list" class="tag-picker"></div></div>
-    <div class="pf-field"><label>Linked documents</label><div id="person-documents-list" class="tag-picker"></div></div>
     <div id="person-upload-status" class="upload-status"></div>
     <div class="person-modal-actions">
       <button id="person-delete-btn" class="text-btn danger-text">Delete person</button>
@@ -2757,9 +2942,13 @@
     <div class="pf-field"><label>Folder</label>
       <select id="document-folder-input"><option value="">— Unfiled —</option></select>
     </div>
-    <div class="pf-field"><label>Locations</label>
+    <div class="pf-field"><label>Location</label>
+      <input type="text" id="document-location-text-input" placeholder="e.g. Warsaw, Poland" maxlength="200">
+      <div class="pf-hint">A plain place name for this document — doesn't need a map to exist for it.</div>
+    </div>
+    <div class="pf-field"><label>Add to map</label>
       <div id="document-locations-list" class="tag-picker"></div>
-      <div class="pf-hint">Matches this document to one or more countries/maps in Explore Maps, so it shows up when viewing pins there.</div>
+      <div class="pf-hint">Matches this document to one or more existing countries/maps in Explore Maps, so it shows up when viewing pins there.</div>
     </div>
     <div class="pf-field">
       <label>Tags</label>
@@ -2771,6 +2960,11 @@
         <button type="button" id="document-notes-drive-btn" class="ghost-btn drive-import-btn">&#128196; Import from Google Doc</button>
       </div>
       <textarea id="document-notes-input" rows="5" placeholder="Anything worth remembering about this document…"></textarea>
+    </div>
+    <div class="pf-field">
+      <label>Source citation</label>
+      <textarea id="document-citation-input" rows="3" placeholder="e.g. 1930 U.S. Federal Census, Roll T626-123, Page 4B, Enumeration District 45, Ancestry.com"></textarea>
+      <div class="pf-hint">Where this document came from, so you (or anyone else) can find or verify it again later.</div>
     </div>
     <div id="document-upload-status" class="upload-status"></div>
     <div class="person-modal-actions">
@@ -2826,6 +3020,18 @@
     <div id="pdf-view-notes-panel">
       <h3>Notes on this document</h3>
       <div id="pdf-view-notes-content"></div>
+      <div id="pdf-view-citation-row">
+        <h3>Source citation</h3>
+        <div id="pdf-view-citation-content"></div>
+      </div>
+      <div id="pdf-view-location-row">
+        <h3>Location</h3>
+        <div id="pdf-view-location-content"></div>
+      </div>
+      <div id="pdf-view-addmap-row">
+        <h3>Add to map</h3>
+        <div id="pdf-view-addmap-content"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -3661,6 +3867,14 @@
       saveState();
       renderAll();
       return true;
+    },
+    focusFamily: function(famId){
+      activeFamilyId = famId;
+      renderAll();
+      setTimeout(function(){
+        var card = document.querySelector('.family-card.active');
+        if(card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 60);
     }
   };
 
@@ -5303,7 +5517,11 @@
   // ---------------- exposed for Documents module (location tagging) ----------------
   window.__fpExploreCountriesApi = {
     getAll: function(){ return countries; },
-    getCountryKeyForRegion: findCountryKeyForRegion
+    getCountryKeyForRegion: findCountryKeyForRegion,
+    switchTo: function(countryKey, regionKey){
+      switchCountry(countryKey);
+      if(regionKey) switchRegion(regionKey);
+    }
   };
 
   window.__onDriveConnected = function(){
@@ -5701,7 +5919,8 @@
       saveNotes();
       renderNotes();
       return true;
-    }
+    },
+    viewNote: function(id){ openNoteViewer(id); }
   };
 
   loadNotes();
@@ -6215,11 +6434,14 @@
       var folderTag = document.createElement("div");
       folderTag.className = "document-card-folder";
       var folderText = folder ? folder.name : "Unfiled";
+      if(doc.location && doc.location.trim()){
+        folderText += " \u00b7 \ud83d\udccd " + doc.location.trim();
+      }
       var docLocKeys = doc.locationCountryKeys || (doc.locationCountryKey ? [doc.locationCountryKey] : []);
       if(docLocKeys.length > 0 && window.__fpExploreCountriesApi){
         var locCountries = window.__fpExploreCountriesApi.getAll();
         var locLabels = docLocKeys.map(function(k){ return locCountries[k] ? locCountries[k].label : null; }).filter(Boolean);
-        if(locLabels.length) folderText += " \u00b7 \ud83d\udccd " + locLabels.join(", ");
+        if(locLabels.length) folderText += " \u00b7 \ud83d\uddfa\ufe0f " + locLabels.join(", ");
       }
       folderTag.textContent = folderText;
       card.appendChild(folderTag);
@@ -6255,9 +6477,11 @@
   var documentNameInput = document.getElementById("document-name-input");
   var documentDateInput = document.getElementById("document-date-input");
   var documentFolderInput = document.getElementById("document-folder-input");
+  var documentLocationTextInput = document.getElementById("document-location-text-input");
   var documentLocationsList = document.getElementById("document-locations-list");
   var documentTagsList = document.getElementById("document-tags-list");
   var documentNotesInput = document.getElementById("document-notes-input");
+  var documentCitationInput = document.getElementById("document-citation-input");
   var documentUploadStatus = document.getElementById("document-upload-status");
   var documentDeleteBtn = document.getElementById("document-delete-btn");
   var editingDocumentId = null;
@@ -6291,6 +6515,8 @@
     documentDateInput.value = doc ? doc.date : "";
     documentFolderInput.value = doc && doc.folderId ? doc.folderId : "";
     documentNotesInput.value = doc ? doc.notes : "";
+    documentCitationInput.value = doc ? (doc.citation || "") : "";
+    documentLocationTextInput.value = doc ? (doc.location || "") : "";
     documentUploadStatus.textContent = "";
     documentUploadStatus.className = "upload-status";
 
@@ -6455,6 +6681,8 @@
           doc.name = name;
           doc.date = documentDateInput.value.trim();
           doc.notes = documentNotesInput.value;
+          doc.citation = documentCitationInput.value.trim();
+          doc.location = documentLocationTextInput.value.trim();
           doc.folderId = documentFolderInput.value || null;
           doc.locationCountryKeys = chosenLocationKeys;
           delete doc.locationCountryKey;
@@ -6467,6 +6695,8 @@
           name: name,
           date: documentDateInput.value.trim(),
           notes: documentNotesInput.value,
+          citation: documentCitationInput.value.trim(),
+          location: documentLocationTextInput.value.trim(),
           folderId: documentFolderInput.value || null,
           locationCountryKeys: chosenLocationKeys,
           tagIds: chosenTagIds
@@ -6552,6 +6782,12 @@
   var pdfViewNotesBtn = document.getElementById("pdf-view-notes-btn");
   var pdfViewNotesPanel = document.getElementById("pdf-view-notes-panel");
   var pdfViewNotesContent = document.getElementById("pdf-view-notes-content");
+  var pdfViewCitationRow = document.getElementById("pdf-view-citation-row");
+  var pdfViewCitationContent = document.getElementById("pdf-view-citation-content");
+  var pdfViewLocationRow = document.getElementById("pdf-view-location-row");
+  var pdfViewLocationContent = document.getElementById("pdf-view-location-content");
+  var pdfViewAddmapRow = document.getElementById("pdf-view-addmap-row");
+  var pdfViewAddmapContent = document.getElementById("pdf-view-addmap-content");
   var currentPdfBlobUrl = null;
 
   function openPdfViewer(doc){
@@ -6568,6 +6804,42 @@
       pdfViewNotesContent.textContent = "No notes were added for this document.";
       pdfViewNotesContent.classList.add("empty");
     }
+    if(doc.citation && doc.citation.trim()){
+      pdfViewCitationContent.textContent = doc.citation;
+      pdfViewCitationRow.style.display = "block";
+    } else {
+      pdfViewCitationRow.style.display = "none";
+    }
+    if(doc.location && doc.location.trim()){
+      pdfViewLocationContent.textContent = doc.location;
+      pdfViewLocationRow.style.display = "block";
+    } else {
+      pdfViewLocationRow.style.display = "none";
+    }
+    pdfViewAddmapContent.innerHTML = "";
+    var mapKeys = doc.locationCountryKeys || (doc.locationCountryKey ? [doc.locationCountryKey] : []);
+    if(mapKeys.length && window.__fpExploreCountriesApi){
+      var allCountries = window.__fpExploreCountriesApi.getAll();
+      mapKeys.forEach(function(ck){
+        var c = allCountries[ck];
+        if(!c) return;
+        var a = document.createElement("a");
+        a.textContent = c.label;
+        a.addEventListener("click", function(){
+          closePdfViewer();
+          var btn = document.querySelector('.tab-btn[data-page="page-explore"]');
+          if(btn) btn.click();
+          setTimeout(function(){ window.__fpExploreCountriesApi.switchTo(ck); }, 80);
+        });
+        pdfViewAddmapContent.appendChild(a);
+      });
+    } else {
+      var noneSpan = document.createElement("span");
+      noneSpan.className = "empty";
+      noneSpan.textContent = "Not added to a map yet \u2014 open Edit to add one.";
+      pdfViewAddmapContent.appendChild(noneSpan);
+    }
+    pdfViewAddmapRow.style.display = "block";
 
     function showBlob(blob){
       if(currentPdfBlobUrl) URL.revokeObjectURL(currentPdfBlobUrl);
@@ -6667,7 +6939,9 @@
     "family-explore-lines-v1",
     "family-explore-countries-delta-v1",
     "family-notes-v1",
-    "family-documents-v1"
+    "family-documents-v1",
+    "family-tree-people-v1",
+    "family-tree-me-id-v1"
   ];
 
   var statusEl = document.getElementById("drive-sync-status");
@@ -6842,7 +7116,8 @@
       migration: window.__fpMigration ? window.__fpMigration.get() : null,
       notes: window.__fpNotes ? window.__fpNotes.get() : null,
       explore: window.__fpExplore ? window.__fpExplore.get() : null,
-      documents: window.__fpDocuments ? window.__fpDocuments.get() : null
+      documents: window.__fpDocuments ? window.__fpDocuments.get() : null,
+      familyTree: window.__fpFamilyTreeApi ? window.__fpFamilyTreeApi.get() : null
     };
   }
 
@@ -6992,6 +7267,7 @@
     if(data.explore && window.__fpExplore) window.__fpExplore.set(data.explore);
     if(data.notes && window.__fpNotes) window.__fpNotes.set(data.notes);
     if(data.documents && window.__fpDocuments) window.__fpDocuments.set(data.documents);
+    if(data.familyTree && window.__fpFamilyTreeApi) window.__fpFamilyTreeApi.set(data.familyTree);
   }
 
   function hasAnyLocalData(){
@@ -7289,7 +7565,7 @@
   // ---------------- places-lived editor ----------------
   function renderPlacesEditor(container, places){
     container.innerHTML = "";
-    var rows = (places || []).map(function(p){ return { id: p.id || uid("place"), place: p.place || "", years: p.years || "" }; });
+    var rows = (places || []).map(function(p){ return { id: p.id || uid("place"), place: p.place || "", years: p.years || "", notes: p.notes || "" }; });
     container._rows = rows;
     function renderRows(){
       container.innerHTML = "";
@@ -7300,6 +7576,8 @@
         container.appendChild(none);
       }
       rows.forEach(function(row){
+        var rowWrap = document.createElement("div");
+        rowWrap.className = "place-row-wrap";
         var rowEl = document.createElement("div");
         rowEl.className = "place-row";
         var placeInput = document.createElement("input");
@@ -7326,19 +7604,27 @@
         rowEl.appendChild(placeInput);
         rowEl.appendChild(yearsInput);
         rowEl.appendChild(rmBtn);
-        container.appendChild(rowEl);
+        var notesInput = document.createElement("input");
+        notesInput.className = "place-notes-input";
+        notesInput.type = "text";
+        notesInput.placeholder = "Notes about this place/time (optional)";
+        notesInput.value = row.notes;
+        notesInput.addEventListener("input", function(){ row.notes = notesInput.value; });
+        rowWrap.appendChild(rowEl);
+        rowWrap.appendChild(notesInput);
+        container.appendChild(rowWrap);
       });
     }
     container._addRow = function(){
-      rows.push({ id: uid("place"), place: "", years: "" });
+      rows.push({ id: uid("place"), place: "", years: "", notes: "" });
       container._rows = rows;
       renderRows();
     };
     renderRows();
   }
   function readPlacesEditor(container){
-    return (container._rows || []).filter(function(r){ return r.place.trim() || r.years.trim(); }).map(function(r){
-      return { id: r.id, place: r.place.trim(), years: r.years.trim() };
+    return (container._rows || []).filter(function(r){ return r.place.trim() || r.years.trim() || r.notes.trim(); }).map(function(r){
+      return { id: r.id, place: r.place.trim(), years: r.years.trim(), notes: r.notes.trim() };
     });
   }
 
@@ -7367,10 +7653,27 @@
     if(placesListEl._addRow) placesListEl._addRow();
   });
 
+  var birthDateApproxInput = document.getElementById("person-birth-date-approx");
+  var deathDateApproxInput = document.getElementById("person-death-date-approx");
+
+  document.querySelectorAll(".person-modal-tab-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".person-modal-tab-btn").forEach(function(b){ b.classList.remove("active"); });
+      document.querySelectorAll(".person-modal-tab-content").forEach(function(c){ c.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById(btn.getAttribute("data-tab")).classList.add("active");
+    });
+  });
+  function resetPersonModalTabs(){
+    document.querySelectorAll(".person-modal-tab-btn").forEach(function(b, i){ b.classList.toggle("active", i === 0); });
+    document.querySelectorAll(".person-modal-tab-content").forEach(function(c, i){ c.classList.toggle("active", i === 0); });
+  }
+
   function openPersonModal(personId){
     editingPersonId = personId || null;
     var p = editingPersonId ? findPerson(editingPersonId) : null;
     document.getElementById("person-modal-title").textContent = p ? "Edit person" : "Add a person";
+    resetPersonModalTabs();
     firstNameInput.value = p ? (p.firstName || "") : "";
     lastNameInput.value = p ? (p.lastName || "") : "";
     birthFirstInput.value = p && p.birthName ? (p.birthName.first || "") : "";
@@ -7378,6 +7681,8 @@
     hebrewNameInput.value = p ? (p.hebrewName || "") : "";
     birthDateInput.value = p ? (p.birthDate || "") : "";
     deathDateInput.value = p ? (p.deathDate || "") : "";
+    birthDateApproxInput.checked = !!(p && p.birthDateApprox);
+    deathDateApproxInput.checked = !!(p && p.deathDateApprox);
     professionInput.value = p ? (p.profession || "") : "";
     bioInput.value = p ? (p.bio || "") : "";
     renderPlacesEditor(placesListEl, p ? p.placesLived : []);
@@ -7438,6 +7743,8 @@
     person.hebrewName = hebrewNameInput.value.trim();
     person.birthDate = birthDateInput.value.trim();
     person.deathDate = deathDateInput.value.trim();
+    person.birthDateApprox = !!birthDateApproxInput.checked;
+    person.deathDateApprox = !!deathDateApproxInput.checked;
     person.profession = professionInput.value.trim();
     person.bio = bioInput.value;
     person.placesLived = readPlacesEditor(placesListEl);
@@ -7539,13 +7846,15 @@
       addViewRow("Name at birth", ((p.birthName.first || "") + " " + (p.birthName.last || "")).trim());
     }
     addViewRow("Hebrew name", p.hebrewName);
-    addViewRow("Birth date", p.birthDate);
-    addViewRow("Death date", p.deathDate);
+    addViewRow("Birth date", p.birthDate ? (p.birthDate + (p.birthDateApprox ? " (approximate)" : "")) : "");
+    addViewRow("Death date", p.deathDate ? (p.deathDate + (p.deathDateApprox ? " (approximate)" : "")) : "");
     addViewRow("Profession", p.profession);
     addViewRow("Bio", p.bio);
     if(p.placesLived && p.placesLived.length){
       addViewRow("Places lived", p.placesLived.map(function(pl){
-        return pl.years ? (pl.place + " (" + pl.years + ")") : pl.place;
+        var line = pl.years ? (pl.place + " (" + pl.years + ")") : pl.place;
+        if(pl.notes) line += "\n  " + pl.notes;
+        return line;
       }).join("\n"));
     }
     addViewLinkRow("Parents", p.parentIds, openPersonViewer, function(id){ var o = findPerson(id); return o ? personLabel(o) : null; });
@@ -8012,11 +8321,12 @@
     var layout = layoutTree(visible, levelOf);
     var positions = layout.positions, NODE_W = layout.NODE_W, NODE_H = layout.NODE_H;
 
-    var maxX = 0, maxY = 0, minX = 0;
+    var maxX = 0, maxY = 0, minX = 0, minY = 0;
     Object.keys(positions).forEach(function(id){
       maxX = Math.max(maxX, positions[id].x + NODE_W);
       maxY = Math.max(maxY, positions[id].y + NODE_H);
       minX = Math.min(minX, positions[id].x);
+      minY = Math.min(minY, positions[id].y);
     });
     var existingViewBox = treeSvg.getAttribute("viewBox");
     if(keepView && existingViewBox){
@@ -8027,8 +8337,8 @@
       treeSvg.setAttribute("viewBox", (cx - cur.w / 2) + " " + (cy - cur.h / 2) + " " + cur.w + " " + cur.h);
     } else {
       var vbW = Math.max(900, maxX - minX + 80);
-      var vbH = Math.max(600, maxY + 80);
-      treeSvg.setAttribute("viewBox", (minX - 40) + " -40 " + vbW + " " + vbH);
+      var vbH = Math.max(600, maxY - minY + 80);
+      treeSvg.setAttribute("viewBox", (minX - 40) + " " + (minY - 40) + " " + vbW + " " + vbH);
     }
 
     var ns = "http://www.w3.org/2000/svg";
@@ -8088,6 +8398,13 @@
         var yearsEl2 = el("text", { x: NODE_W / 2, y: 54, "text-anchor": "middle", class: "tree-node-years" });
         yearsEl2.textContent = years;
         g.appendChild(yearsEl2);
+      }
+      var hasHiddenParents = (p.parentIds || []).some(function(pid){ return findPerson(pid) && !visible[pid]; });
+      if(hasHiddenParents){
+        g.appendChild(el("line", {
+          x1: NODE_W / 2, y1: -18, x2: NODE_W / 2, y2: 0,
+          class: "tree-hidden-ancestors-hint"
+        }));
       }
       g.style.cursor = "pointer";
       g.addEventListener("click", function(e){
@@ -8223,6 +8540,33 @@
     var newW = Math.min(8000, vb.w * 1.25), newH = newW * (vb.h / vb.w);
     setViewBox({ x: vb.x + (vb.w - newW) / 2, y: vb.y + (vb.h - newH) / 2, w: newW, h: newH });
   });
+
+  window.__fpFamilyTreeApi = {
+    getAll: function(){ return people; },
+    focusOn: function(id){
+      focusPersonId = id;
+      activeActionsPersonId = id;
+      renderTree();
+    },
+    get: function(){ return { people: people, meId: meId }; },
+    set: function(payload){
+      if(!payload || !Array.isArray(payload.people)) return false;
+      people = payload.people;
+      people.forEach(function(p){
+        if(!Array.isArray(p.parentIds)) p.parentIds = [];
+        if(!Array.isArray(p.partnerIds)) p.partnerIds = [];
+        if(!Array.isArray(p.documentIds)) p.documentIds = [];
+        if(!Array.isArray(p.placesLived)) p.placesLived = [];
+      });
+      meId = payload.meId || null;
+      focusPersonId = null;
+      activeActionsPersonId = null;
+      savePeople();
+      if(meId) setMe(meId);
+      renderTree();
+      return true;
+    }
+  };
 
   renderTree();
 })();
@@ -8374,7 +8718,8 @@
       migration: window.__fpMigration ? window.__fpMigration.get() : null,
       notes: window.__fpNotes ? window.__fpNotes.get() : null,
       explore: window.__fpExplore ? window.__fpExplore.get() : null,
-      documents: window.__fpDocuments ? window.__fpDocuments.get() : null
+      documents: window.__fpDocuments ? window.__fpDocuments.get() : null,
+      familyTree: window.__fpFamilyTreeApi ? window.__fpFamilyTreeApi.get() : null
     };
     var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
@@ -8413,6 +8758,7 @@
       if(data.migration && Array.isArray(data.migration.families)) summary.push(data.migration.families.length + " family line" + (data.migration.families.length === 1 ? "" : "s"));
       if(data.notes && Array.isArray(data.notes.list)) summary.push(data.notes.list.length + " note" + (data.notes.list.length === 1 ? "" : "s"));
       if(data.documents && Array.isArray(data.documents.documents)) summary.push(data.documents.documents.length + " document" + (data.documents.documents.length === 1 ? "" : "s"));
+      if(data.familyTree && Array.isArray(data.familyTree.people)) summary.push(data.familyTree.people.length + " tree " + (data.familyTree.people.length === 1 ? "person" : "people"));
       else if(data.tree && data.tree.people) summary.push(Object.keys(data.tree.people).length + " tree " + (Object.keys(data.tree.people).length === 1 ? "person" : "people") + " (from an older backup \u2014 the Family Tree feature has been replaced by Family Notes, so this part will be skipped)");
       var msg = "Load this backup" + (summary.length ? (" (" + summary.join(", ") + ")") : "") + "? This will replace everything currently on this page.";
       appConfirm(msg, function(ok){
@@ -8420,13 +8766,14 @@
           importInput.value = "";
           return;
         }
-        var okM = true, okE = true, okN = true, okD = true;
+        var okM = true, okE = true, okN = true, okD = true, okT = true;
         if(data.migration && window.__fpMigration) okM = window.__fpMigration.set(data.migration);
         if(data.explore && window.__fpExplore) okE = window.__fpExplore.set(data.explore);
         if(data.notes && window.__fpNotes) okN = window.__fpNotes.set(data.notes);
         if(data.documents && window.__fpDocuments) okD = window.__fpDocuments.set(data.documents);
+        if(data.familyTree && window.__fpFamilyTreeApi) okT = window.__fpFamilyTreeApi.set(data.familyTree);
         importInput.value = "";
-        if(!okM || !okE || !okN || !okD){
+        if(!okM || !okE || !okN || !okD || !okT){
           appAlert("The backup loaded, but part of it looked malformed and was skipped.");
         }
       });
@@ -8434,6 +8781,184 @@
     reader.readAsText(file);
   });
 
+})();
+
+
+// ---------------- unified search (across Migration Map, Explore Maps, Documents, Family Notes, Family Tree) ----------------
+(function(){
+  "use strict";
+  var input = document.getElementById("global-search-input");
+  var resultsEl = document.getElementById("global-search-results");
+  var debounceTimer = null;
+
+  function escapeText(s){ return String(s || ""); }
+
+  function goToTab(pageId, after){
+    var btn = document.querySelector('.tab-btn[data-page="' + pageId + '"]');
+    if(btn) btn.click();
+    setTimeout(after, 80);
+  }
+  function closeDropdown(){
+    resultsEl.classList.remove("show");
+    resultsEl.innerHTML = "";
+  }
+
+  function searchAll(q){
+    var needle = q.toLowerCase();
+    var results = { documents: [], notes: [], people: [], places: [], families: [] };
+
+    if(window.__fpDocuments){
+      window.__fpDocuments.get().documents.forEach(function(d){
+        var hay = ((d.name || "") + " " + (d.notes || "") + " " + (d.citation || "")).toLowerCase();
+        if(hay.indexOf(needle) !== -1) results.documents.push(d);
+      });
+    }
+    if(window.__fpNotes){
+      (window.__fpNotes.get().list || []).forEach(function(n){
+        var hay = ((n.title || "") + " " + (n.body || "")).toLowerCase();
+        if(hay.indexOf(needle) !== -1) results.notes.push(n);
+      });
+    }
+    if(window.__fpFamilyTreeApi){
+      window.__fpFamilyTreeApi.getAll().forEach(function(p){
+        var hay = ((p.firstName || "") + " " + (p.lastName || "") + " " + (p.profession || "") + " " + (p.bio || "")).toLowerCase();
+        if(hay.indexOf(needle) !== -1) results.people.push(p);
+      });
+    }
+    if(window.__fpExploreCountriesApi){
+      var countries = window.__fpExploreCountriesApi.getAll();
+      Object.keys(countries).forEach(function(ck){
+        var c = countries[ck];
+        (c.regions || []).forEach(function(r){
+          var hay = (c.label + " " + r.label).toLowerCase();
+          if(hay.indexOf(needle) !== -1) results.places.push({ countryKey: ck, countryLabel: c.label, regionKey: r.key, regionLabel: r.label });
+        });
+      });
+    }
+    if(window.__fpMigration){
+      var state = window.__fpMigration.get();
+      (state.families || []).forEach(function(f){
+        var wpHay = (f.waypoints || []).map(function(w){ return w.place; }).join(" ");
+        var hay = ((f.name || "") + " " + wpHay).toLowerCase();
+        if(hay.indexOf(needle) !== -1) results.families.push(f);
+      });
+    }
+    return results;
+  }
+
+  function addGroup(label, items, renderRow){
+    if(!items.length) return;
+    var lab = document.createElement("div");
+    lab.className = "gsr-group-label";
+    lab.textContent = label;
+    resultsEl.appendChild(lab);
+    items.slice(0, 6).forEach(renderRow);
+  }
+
+  function renderResults(results, q){
+    resultsEl.innerHTML = "";
+    var total = results.documents.length + results.notes.length + results.people.length + results.places.length + results.families.length;
+    if(total === 0){
+      var empty = document.createElement("div");
+      empty.className = "gsr-empty";
+      empty.textContent = "No matches for \u201c" + escapeText(q) + "\u201d.";
+      resultsEl.appendChild(empty);
+      resultsEl.classList.add("show");
+      return;
+    }
+
+    addGroup("Documents", results.documents, function(d){
+      var row = document.createElement("div");
+      row.className = "gsr-row";
+      row.textContent = d.name || "Untitled document";
+      row.addEventListener("click", function(){
+        closeDropdown();
+        goToTab("page-documents", function(){
+          if(window.__fpDocumentsApi) window.__fpDocumentsApi.viewDocument(d.id);
+        });
+      });
+      resultsEl.appendChild(row);
+    });
+
+    addGroup("Family Notes", results.notes, function(n){
+      var row = document.createElement("div");
+      row.className = "gsr-row";
+      row.textContent = n.title || "Untitled note";
+      row.addEventListener("click", function(){
+        closeDropdown();
+        goToTab("page-notes", function(){
+          if(window.__fpNotes && window.__fpNotes.viewNote) window.__fpNotes.viewNote(n.id);
+        });
+      });
+      resultsEl.appendChild(row);
+    });
+
+    addGroup("Family Tree", results.people, function(p){
+      var row = document.createElement("div");
+      row.className = "gsr-row";
+      var name = ((p.firstName || "") + " " + (p.lastName || "")).trim() || "Unnamed";
+      row.textContent = name;
+      row.addEventListener("click", function(){
+        closeDropdown();
+        goToTab("page-tree", function(){
+          if(window.__fpFamilyTreeApi) window.__fpFamilyTreeApi.focusOn(p.id);
+        });
+      });
+      resultsEl.appendChild(row);
+    });
+
+    addGroup("Explore Maps", results.places, function(pl){
+      var row = document.createElement("div");
+      row.className = "gsr-row";
+      var main = document.createElement("span");
+      main.textContent = pl.regionLabel;
+      var sub = document.createElement("span");
+      sub.className = "gsr-sub";
+      sub.textContent = pl.countryLabel;
+      row.appendChild(main);
+      row.appendChild(sub);
+      row.addEventListener("click", function(){
+        closeDropdown();
+        goToTab("page-explore", function(){
+          if(window.__fpExploreCountriesApi) window.__fpExploreCountriesApi.switchTo(pl.countryKey, pl.regionKey);
+        });
+      });
+      resultsEl.appendChild(row);
+    });
+
+    addGroup("Migration Map", results.families, function(f){
+      var row = document.createElement("div");
+      row.className = "gsr-row";
+      row.textContent = f.name || "Unnamed family";
+      row.addEventListener("click", function(){
+        closeDropdown();
+        goToTab("page-migration", function(){
+          if(window.__fpMigration && window.__fpMigration.focusFamily) window.__fpMigration.focusFamily(f.id);
+        });
+      });
+      resultsEl.appendChild(row);
+    });
+
+    resultsEl.classList.add("show");
+  }
+
+  input.addEventListener("input", function(){
+    clearTimeout(debounceTimer);
+    var q = input.value.trim();
+    if(!q){ closeDropdown(); return; }
+    debounceTimer = setTimeout(function(){
+      renderResults(searchAll(q), q);
+    }, 150);
+  });
+  input.addEventListener("focus", function(){
+    if(input.value.trim()) renderResults(searchAll(input.value.trim()), input.value.trim());
+  });
+  document.addEventListener("click", function(e){
+    if(e.target !== input && !resultsEl.contains(e.target)) closeDropdown();
+  });
+  input.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){ input.blur(); closeDropdown(); }
+  });
 })();
 
 </script>
