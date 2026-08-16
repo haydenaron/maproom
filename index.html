@@ -1349,6 +1349,8 @@
     padding:26px 28px;
     width:440px;
     max-width:92vw;
+    max-height:88vh;
+    overflow-y:auto;
     box-shadow:0 20px 60px rgba(0,0,0,0.5);
   }
   .upload-modal h2{
@@ -3012,6 +3014,7 @@
       <span id="pdf-view-title">Document</span>
       <div id="pdf-view-actions">
         <button id="pdf-view-notes-btn" class="ghost-btn" type="button">&#128221; Notes</button>
+        <button id="pdf-view-edit-btn" class="ghost-btn" type="button">&#9998; Edit</button>
         <a id="pdf-view-download" class="ghost-btn" download="">Download</a>
         <button id="pdf-view-close" class="ghost-btn">Close</button>
       </div>
@@ -6788,10 +6791,19 @@
   var pdfViewLocationContent = document.getElementById("pdf-view-location-content");
   var pdfViewAddmapRow = document.getElementById("pdf-view-addmap-row");
   var pdfViewAddmapContent = document.getElementById("pdf-view-addmap-content");
+  var pdfViewEditBtn = document.getElementById("pdf-view-edit-btn");
   var currentPdfBlobUrl = null;
+  var currentPdfDocId = null;
+
+  pdfViewEditBtn.addEventListener("click", function(){
+    var id = currentPdfDocId;
+    closePdfViewer();
+    if(id) openDocumentModal(id);
+  });
 
   function openPdfViewer(doc){
     if(!doc || (!doc.fileData && !doc.driveFileId)) return;
+    currentPdfDocId = doc.id;
     pdfViewTitle.textContent = doc.name || "Document";
     pdfViewFrame.src = "about:blank";
     pdfViewBackdrop.classList.add("open");
@@ -8112,22 +8124,45 @@
     });
     var levelNums = Object.keys(levels).map(Number).sort(function(a, b){ return a - b; });
 
-    // Build family units once per level (partners grouped together).
+    // Build family units once per level. Two people belong in the same unit if
+    // they're explicit partners OR if they share at least one child - a couple
+    // is still a couple even if the user only linked them as co-parents and
+    // never separately added each other under "Partners". Treating them as
+    // independent single-person units is what caused couples to be drawn as if
+    // they were unrelated people whose kids looked like siblings of 4 "parents".
     var levelUnits = {};
     levelNums.forEach(function(lvl){
       var row = levels[lvl];
-      var used = {}, units = [];
+      var parentOf = {};
+      row.forEach(function(id){ parentOf[id] = id; });
+      function find(x){ while(parentOf[x] !== x){ x = parentOf[x]; } return x; }
+      function union(a, b){ var ra = find(a), rb = find(b); if(ra !== rb) parentOf[ra] = rb; }
+
       row.forEach(function(id){
-        if(used[id]) return;
         var p = findPerson(id);
-        var unit = [id];
-        used[id] = true;
         (p.partnerIds || []).forEach(function(pid){
-          if(row.indexOf(pid) !== -1 && !used[pid]){ unit.push(pid); used[pid] = true; }
+          if(row.indexOf(pid) !== -1) union(id, pid);
         });
-        units.push(unit);
       });
-      levelUnits[lvl] = units;
+      var childParents = {};
+      row.forEach(function(id){
+        childrenOf(id).forEach(function(c){
+          if(!childParents[c.id]) childParents[c.id] = [];
+          childParents[c.id].push(id);
+        });
+      });
+      Object.keys(childParents).forEach(function(cid){
+        var parents = childParents[cid];
+        for(var i = 1; i < parents.length; i++) union(parents[0], parents[i]);
+      });
+
+      var groups = {};
+      row.forEach(function(id){
+        var root = find(id);
+        if(!groups[root]) groups[root] = [];
+        groups[root].push(id);
+      });
+      levelUnits[lvl] = Object.keys(groups).map(function(k){ return groups[k]; });
     });
 
     function familyKeyFor(unit){
@@ -8316,6 +8351,46 @@
       var res = computeVisibleSet(focusPersonId);
       visible = res.visible; levelOf = res.levelOf;
     }
+
+    // A married/co-parenting couple is always the same real-life generation, even
+    // if the records for one side happen to trace back further than the other's -
+    // without this, whichever partner's ancestry is recorded more deeply gets
+    // pushed a row below their own spouse, breaking apart couples entirely.
+    (function snapCouplesToSameLevel(){
+      var ids = Object.keys(visible);
+      var parentOf = {};
+      ids.forEach(function(id){ parentOf[id] = id; });
+      function find(x){ while(parentOf[x] !== x){ x = parentOf[x]; } return x; }
+      function union(a, b){ var ra = find(a), rb = find(b); if(ra !== rb) parentOf[ra] = rb; }
+      ids.forEach(function(id){
+        var p = findPerson(id);
+        if(!p) return;
+        (p.partnerIds || []).forEach(function(pid){ if(visible[pid]) union(id, pid); });
+      });
+      var childParents = {};
+      ids.forEach(function(id){
+        childrenOf(id).forEach(function(c){
+          if(!visible[c.id]) return;
+          if(!childParents[c.id]) childParents[c.id] = [];
+          childParents[c.id].push(id);
+        });
+      });
+      Object.keys(childParents).forEach(function(cid){
+        var parents = childParents[cid];
+        for(var i = 1; i < parents.length; i++) union(parents[0], parents[i]);
+      });
+      var groups = {};
+      ids.forEach(function(id){
+        var root = find(id);
+        if(!groups[root]) groups[root] = [];
+        groups[root].push(id);
+      });
+      Object.keys(groups).forEach(function(root){
+        var members = groups[root];
+        var maxLevel = Math.max.apply(null, members.map(function(id){ return levelOf[id]; }));
+        members.forEach(function(id){ levelOf[id] = maxLevel; });
+      });
+    })();
 
     var q = (document.getElementById("tree-search").value || "").trim().toLowerCase();
     var matchIds = q ? people.filter(function(p){ return personLabel(p).toLowerCase().indexOf(q) !== -1; }).map(function(p){ return p.id; }) : null;
