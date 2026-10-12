@@ -469,6 +469,11 @@
     z-index:30;
     box-shadow:0 8px 24px rgba(0,0,0,0.5);
   }
+  #waypoint-form{
+    width:300px;
+    max-height:80vh;
+    overflow-y:auto;
+  }
   #waypoint-form h3, #country-waypoint-form h3{
     margin:0 0 10px;
     font-family:'Playfair Display', serif;
@@ -485,7 +490,7 @@
     color:var(--ink-muted);
     margin:8px 0 4px;
   }
-  #waypoint-form input, #country-waypoint-form input{
+  #waypoint-form input, #country-waypoint-form input, #waypoint-form textarea{
     width:100%;
     background:var(--ocean);
     border:1px solid var(--panel-border);
@@ -495,7 +500,15 @@
     font-family:'Spectral', serif;
     font-size:14px;
   }
-  #waypoint-form input:focus, #country-waypoint-form input:focus{outline:none;border-color:var(--brass);}
+  #waypoint-form textarea{ resize:vertical; }
+  #waypoint-form input:focus, #country-waypoint-form input:focus, #waypoint-form textarea:focus{outline:none;border-color:var(--brass);}
+  #waypoint-form .attach-doc-list{
+    max-height:140px;
+    overflow-y:auto;
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    margin-top:6px;
+  }
   #waypoint-form .form-actions, #country-waypoint-form .form-actions{
     display:flex;
     gap:8px;
@@ -1513,7 +1526,7 @@
     font-style:italic;
     font-size:13px;
   }
-  #add-country-modal-backdrop, #add-region-modal-backdrop, #note-modal-backdrop, #folder-modal-backdrop, #document-modal-backdrop, #stop-edit-modal-backdrop, #tag-modal-backdrop, #pin-documents-modal-backdrop, #drive-picker-modal-backdrop{
+  #add-country-modal-backdrop, #add-region-modal-backdrop, #note-modal-backdrop, #folder-modal-backdrop, #document-modal-backdrop, #stop-edit-modal-backdrop, #tag-modal-backdrop, #pin-documents-modal-backdrop, #wp-view-modal-backdrop, #drive-picker-modal-backdrop{
     display:none;
     position:fixed;
     inset:0;
@@ -1522,7 +1535,7 @@
     align-items:center;
     justify-content:center;
   }
-  #add-country-modal-backdrop.open, #add-region-modal-backdrop.open, #note-modal-backdrop.open, #folder-modal-backdrop.open, #document-modal-backdrop.open, #stop-edit-modal-backdrop.open, #tag-modal-backdrop.open, #pin-documents-modal-backdrop.open, #drive-picker-modal-backdrop.open{display:flex;}
+  #add-country-modal-backdrop.open, #add-region-modal-backdrop.open, #note-modal-backdrop.open, #folder-modal-backdrop.open, #document-modal-backdrop.open, #stop-edit-modal-backdrop.open, #tag-modal-backdrop.open, #pin-documents-modal-backdrop.open, #wp-view-modal-backdrop.open, #drive-picker-modal-backdrop.open{display:flex;}
   #drive-picker-modal-backdrop{ z-index:140; }
   #pin-documents-modal{
     background:var(--panel);
@@ -2580,10 +2593,10 @@
 
 <div id="tab-bar">
   <span class="tab-brand">The Map Room</span>
-  <button class="tab-btn active" data-page="page-migration">Migration Map</button>
+  <button class="tab-btn active" data-page="page-documents">Documents</button>
   <button class="tab-btn" data-page="page-explore">Explore Maps</button>
-  <button class="tab-btn" data-page="page-documents">Documents</button>
   <button class="tab-btn" data-page="page-notes">Family Notes</button>
+  <button class="tab-btn" data-page="page-migration">World Map</button>
   <button class="tab-btn" data-page="page-tree">Family Tree</button>
   <div class="tab-bar-spacer"></div>
   <div id="global-search-wrap">
@@ -2599,7 +2612,7 @@
 
 <div id="app-body">
 
-<div id="page-migration" class="page active">
+<div id="page-migration" class="page">
 <div id="sidebar">
   <div class="sidebar-header">
     <p class="eyebrow">The Map Room</p>
@@ -2609,8 +2622,16 @@
 
   <form id="new-family-form">
     <input id="new-family-input" type="text" placeholder="New family line, e.g. Kowalski" maxlength="40" autocomplete="off">
+    <select id="new-family-kind" title="Connected route or unconnected pins">
+      <option value="route">Route (connected)</option>
+      <option value="pins">Pins (unconnected)</option>
+    </select>
     <button type="submit">Add</button>
   </form>
+
+  <div class="tree-panel-section">
+    <button id="toggle-all-routes-btn" class="ghost-full-btn full-btn" type="button">Hide all routes</button>
+  </div>
 
   <div id="family-list"></div>
 </div>
@@ -2627,6 +2648,11 @@
     <input id="wp-place" type="text" placeholder="e.g. Naples, Italy" maxlength="60" autocomplete="off">
     <label for="wp-year">Year</label>
     <input id="wp-year" type="number" placeholder="e.g. 1907" min="1" max="2100">
+    <label for="wp-notes">Notes</label>
+    <textarea id="wp-notes" rows="3" placeholder="Anything worth remembering about this stop&hellip;"></textarea>
+    <label>Attached documents</label>
+    <input type="text" id="wp-doc-search" placeholder="Search by tag or name&hellip;" autocomplete="off">
+    <div id="wp-doc-list" class="attach-doc-list"></div>
     <div class="form-actions">
       <button id="wp-cancel" type="button">Cancel</button>
       <button id="wp-save" type="button">Add stop</button>
@@ -2833,7 +2859,7 @@
   </div>
 </div>
 
-<div id="page-documents" class="page">
+<div id="page-documents" class="page active">
 
   <div id="documents-sidebar">
     <div class="sidebar-header">
@@ -2891,6 +2917,22 @@
       <div class="person-modal-actions-right">
         <button id="stop-edit-cancel-btn" class="ghost-btn">Cancel</button>
         <button id="stop-edit-save-btn" class="solid-btn">Save stop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="wp-view-modal-backdrop">
+  <div id="wp-view-modal" class="upload-modal">
+    <h2 id="wp-view-title">Stop</h2>
+    <p id="wp-view-sub" class="pf-hint"></p>
+    <div id="wp-view-notes" class="pin-doc-notes" style="white-space:pre-wrap;margin-bottom:12px;"></div>
+    <div id="wp-view-docs"></div>
+    <div class="person-modal-actions">
+      <div></div>
+      <div class="person-modal-actions-right">
+        <button id="wp-view-edit-btn" class="ghost-btn">Edit</button>
+        <button id="wp-view-close-btn" class="ghost-btn">Close</button>
       </div>
     </div>
   </div>
@@ -3332,7 +3374,7 @@
       var pts = sorted.map(function(wp){ return project(wp.lat, wp.lon); });
       var dim = activeFamilyId && activeFamilyId!==fam.id;
 
-      if(pts.length > 1){
+      if(pts.length > 1 && fam.kind !== "pins"){
         var path = el("path",{
           d: straightPath(pts),
           class:"route-line",
@@ -3345,7 +3387,7 @@
 
       sorted.forEach(function(wp, i){
         var p = pts[i];
-        var isFirst = i===0;
+        var isFirst = i===0 && fam.kind !== "pins";
         var dot = el("circle",{
           cx:p.x, cy:p.y, r: isFirst ? 5 : 3.6,
           fill: fam.color,
@@ -3371,7 +3413,7 @@
         hit.addEventListener("click", function(e){
           if(arming || dragMoved) return;
           e.stopPropagation();
-          openWaypointEditForm(fam, wp, e.clientX, e.clientY);
+          openWaypointView(fam, wp, e.clientX, e.clientY);
         });
         dynamicLayer.appendChild(hit);
 
@@ -3402,6 +3444,10 @@
 
   function renderSidebar(){
     familyListEl.innerHTML = "";
+    if(state.families.length){
+      var anyVisibleNow = state.families.some(function(f){ return f.visible; });
+      toggleAllRoutesBtn.textContent = anyVisibleNow ? "Hide all routes" : "Show all routes";
+    }
     if(state.families.length === 0){
       var empty = document.createElement("div");
       empty.id = "empty-families";
@@ -3418,6 +3464,7 @@
       head.className = "family-head";
       head.innerHTML =
         '<span class="family-name">'+escapeHtml(fam.name)+'</span>' +
+        '<span class="line-kind-badge">' + (fam.kind === "pins" ? "PINS" : "ROUTE") + '</span>' +
         '<span class="family-count">'+fam.waypoints.length+' stop'+(fam.waypoints.length===1?'':'s')+'</span>';
 
       var swatch = document.createElement("input");
@@ -3470,7 +3517,7 @@
             '<span class="wp-place">'+escapeHtml(wp.place)+'</span>';
           row.addEventListener("click", function(e){
             e.stopPropagation();
-            openWaypointEditForm(fam, wp);
+            openWaypointView(fam, wp);
           });
           var del = document.createElement("button");
           del.className = "wp-del";
@@ -3534,6 +3581,17 @@
     return d.innerHTML;
   }
 
+  var toggleAllRoutesBtn = document.getElementById("toggle-all-routes-btn");
+  toggleAllRoutesBtn.addEventListener("click", function(){
+    var anyVisible = state.families.some(function(f){ return f.visible; });
+    var newVisible = !anyVisible; // if any are showing, this click hides all; else it shows all
+    state.families.forEach(function(f){ f.visible = newVisible; });
+    toggleAllRoutesBtn.textContent = newVisible ? "Hide all routes" : "Show all routes";
+    saveState();
+    renderAll();
+  });
+
+  var newFamilyKind = document.getElementById("new-family-kind");
   newFamilyForm.addEventListener("submit", function(e){
     e.preventDefault();
     var name = newFamilyInput.value.trim();
@@ -3543,12 +3601,14 @@
       name: name,
       color: familyColor(state.families.length),
       visible: true,
+      kind: newFamilyKind.value === "pins" ? "pins" : "route",
       waypoints: [],
       notes: ""
     };
     state.families.push(fam);
     activeFamilyId = fam.id;
     newFamilyInput.value = "";
+    newFamilyKind.value = "route";
     saveState();
     renderAll();
   });
@@ -3558,8 +3618,84 @@
   var wpForm = document.getElementById("waypoint-form");
   var wpPlaceInput = document.getElementById("wp-place");
   var wpYearInput = document.getElementById("wp-year");
+  var wpNotesInput = document.getElementById("wp-notes");
+  var wpDocList = document.getElementById("wp-doc-list");
+  var wpDocSearch = document.getElementById("wp-doc-search");
   var wpFormTitle = document.getElementById("wp-form-title");
   var wpSaveBtn = document.getElementById("wp-save");
+  var pendingWpDocIds = []; // used for the "add a stop" flow, before the waypoint exists
+
+  function currentWpDocIds(){
+    if(editingWaypoint){
+      var efam = state.families.find(function(f){ return f.id === editingWaypoint.famId; });
+      var ewp = efam ? efam.waypoints.find(function(w){ return w.id === editingWaypoint.wpId; }) : null;
+      if(ewp){
+        if(!ewp.documentIds) ewp.documentIds = [];
+        return ewp.documentIds;
+      }
+    }
+    return pendingWpDocIds;
+  }
+  function renderWpDocList(){
+    wpDocList.innerHTML = "";
+    var docsApi = window.__fpDocumentsApi;
+    var allDocs = docsApi ? docsApi.getAll() : [];
+    var allTags = docsApi && docsApi.getAllTags ? docsApi.getAllTags() : [];
+    function tagNamesFor(doc){
+      return (doc.tagIds || []).map(function(tid){
+        var t = allTags.find(function(x){ return x.id === tid; });
+        return t ? t.name : "";
+      }).filter(Boolean);
+    }
+    if(allDocs.length === 0){
+      var none = document.createElement("div");
+      none.className = "no-stops";
+      none.style.padding = "10px";
+      none.textContent = "No documents uploaded yet. Add some in the Documents tab.";
+      wpDocList.appendChild(none);
+      return;
+    }
+    var query = wpDocSearch.value.trim().toLowerCase();
+    var visibleDocs = allDocs.filter(function(doc){
+      if(!query) return true;
+      var tagText = tagNamesFor(doc).join(" ").toLowerCase();
+      return (doc.name || "").toLowerCase().indexOf(query) !== -1 || tagText.indexOf(query) !== -1;
+    });
+    if(visibleDocs.length === 0){
+      var noMatch = document.createElement("div");
+      noMatch.className = "no-stops";
+      noMatch.style.padding = "10px";
+      noMatch.textContent = "No documents match that search.";
+      wpDocList.appendChild(noMatch);
+      return;
+    }
+    var docIds = currentWpDocIds();
+    visibleDocs.slice().sort(function(a, b){ return (a.name || "").localeCompare(b.name || ""); }).forEach(function(doc){
+      var row = document.createElement("label");
+      row.className = "attach-doc-row";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = docIds.indexOf(doc.id) !== -1;
+      cb.addEventListener("change", function(){
+        var ids = currentWpDocIds();
+        if(cb.checked){
+          if(ids.indexOf(doc.id) === -1) ids.push(doc.id);
+        } else {
+          var idx = ids.indexOf(doc.id);
+          if(idx !== -1) ids.splice(idx, 1);
+        }
+      });
+      var nameSpan = document.createElement("span");
+      nameSpan.className = "attach-doc-row-name";
+      var tags = tagNamesFor(doc);
+      var tagSuffix = tags.length ? "  \u00b7 " + tags.join(", ") : "";
+      nameSpan.textContent = (doc.name || "Untitled document") + tagSuffix;
+      row.appendChild(cb);
+      row.appendChild(nameSpan);
+      wpDocList.appendChild(row);
+    });
+  }
+  wpDocSearch.addEventListener("input", renderWpDocList);
 
   function openWaypointEditForm(fam, wp, clientX, clientY){
     disarm();
@@ -3570,6 +3706,9 @@
     wpSaveBtn.textContent = "Save changes";
     wpPlaceInput.value = wp.place;
     wpYearInput.value = wp.year;
+    wpNotesInput.value = wp.notes || "";
+    wpDocSearch.value = "";
+    renderWpDocList();
     var wrapRect = document.getElementById("map-wrap").getBoundingClientRect();
     var cx = (clientX !== undefined) ? clientX : (wrapRect.left + wrapRect.width / 2);
     var cy = (clientY !== undefined) ? clientY : (wrapRect.top + wrapRect.height / 2);
@@ -3582,6 +3721,60 @@
     wpForm.style.display = "block";
     wpPlaceInput.focus();
   }
+
+  // ---------------- view a stop/pin (notes + attached documents) ----------------
+  var wpViewBackdrop = document.getElementById("wp-view-modal-backdrop");
+  var wpViewCtx = null;
+  function openWaypointView(fam, wp, clientX, clientY){
+    wpViewCtx = { fam: fam, wp: wp, x: clientX, y: clientY };
+    document.getElementById("wp-view-title").textContent = wp.place || "Stop";
+    document.getElementById("wp-view-sub").textContent = (fam.name || "") + (wp.year ? " \u00b7 " + wp.year : "");
+    var notesEl = document.getElementById("wp-view-notes");
+    var hasNotes = wp.notes && wp.notes.trim();
+    notesEl.style.display = hasNotes ? "block" : "none";
+    notesEl.textContent = hasNotes ? wp.notes : "";
+    var list = document.getElementById("wp-view-docs");
+    list.innerHTML = "";
+    var docsApi = window.__fpDocumentsApi;
+    var ids = wp.documentIds || [];
+    var docs = [];
+    if(docsApi) ids.forEach(function(id){ var d = docsApi.getById(id); if(d) docs.push(d); });
+    if(docs.length === 0){
+      var none = document.createElement("div");
+      none.className = "no-stops";
+      none.textContent = hasNotes ? "No documents attached to this stop." : "No notes or documents on this stop yet. Use Edit to add some.";
+      list.appendChild(none);
+    }
+    docs.forEach(function(d){
+      var row = document.createElement("div");
+      row.className = "pin-doc-row";
+      var year = document.createElement("div");
+      year.className = "pin-doc-year";
+      year.textContent = d.date || "\u2014";
+      var info = document.createElement("div");
+      info.className = "pin-doc-info";
+      var name = document.createElement("div");
+      name.className = "pin-doc-name";
+      name.textContent = d.name || "Untitled document";
+      info.appendChild(name);
+      if(d.notes && d.notes.trim()){
+        var n = document.createElement("div");
+        n.className = "pin-doc-notes";
+        n.textContent = d.notes;
+        info.appendChild(n);
+      }
+      row.appendChild(year);
+      row.appendChild(info);
+      row.addEventListener("click", function(){ docsApi.viewDocument(d.id); });
+      list.appendChild(row);
+    });
+    wpViewBackdrop.classList.add("open");
+  }
+  document.getElementById("wp-view-close-btn").addEventListener("click", function(){ wpViewBackdrop.classList.remove("open"); });
+  document.getElementById("wp-view-edit-btn").addEventListener("click", function(){
+    wpViewBackdrop.classList.remove("open");
+    if(wpViewCtx) openWaypointEditForm(wpViewCtx.fam, wpViewCtx.wp, wpViewCtx.x, wpViewCtx.y);
+  });
 
   function updateHintBar(){
     if(arming && activeFamilyId){
@@ -3801,12 +3994,17 @@
     wpSaveBtn.textContent = "Add stop";
     wpPlaceInput.value = "";
     wpYearInput.value = "";
+    wpNotesInput.value = "";
+    wpDocSearch.value = "";
+    pendingWpDocIds = [];
+    renderWpDocList();
     wpPlaceInput.focus();
   });
 
   document.getElementById("wp-cancel").addEventListener("click", function(){
     pendingPoint = null;
     editingWaypoint = null;
+    pendingWpDocIds = [];
     wpForm.style.display = "none";
     renderMapLines();
   });
@@ -3816,12 +4014,13 @@
     var year = parseInt(wpYearInput.value, 10);
     if(!place){ wpPlaceInput.focus(); return; }
     if(!year || isNaN(year)){ wpYearInput.focus(); return; }
+    var notes = wpNotesInput.value;
 
     if(editingWaypoint){
       var efam = state.families.find(function(f){ return f.id === editingWaypoint.famId; });
       if(efam){
         var ewp = efam.waypoints.find(function(w){ return w.id === editingWaypoint.wpId; });
-        if(ewp){ ewp.place = place; ewp.year = year; }
+        if(ewp){ ewp.place = place; ewp.year = year; ewp.notes = notes; }
       }
       editingWaypoint = null;
       wpForm.style.display = "none";
@@ -3834,9 +4033,10 @@
     var geo = invert(pendingPoint.x, pendingPoint.y);
     var fam = state.families.find(function(f){ return f.id===activeFamilyId; });
     if(!fam) return;
-    fam.waypoints.push({ id: uid(), place: place, year: year, lat: geo.lat, lon: geo.lon });
+    fam.waypoints.push({ id: uid(), place: place, year: year, lat: geo.lat, lon: geo.lon, notes: notes, documentIds: pendingWpDocIds });
 
     pendingPoint = null;
+    pendingWpDocIds = [];
     wpForm.style.display = "none";
     saveState();
     renderAll();
@@ -8868,7 +9068,7 @@
 })();
 
 
-// ---------------- unified search (across Migration Map, Explore Maps, Documents, Family Notes, Family Tree) ----------------
+// ---------------- unified search (across World Map, Explore Maps, Documents, Family Notes, Family Tree) ----------------
 (function(){
   "use strict";
   var input = document.getElementById("global-search-input");
@@ -9010,7 +9210,7 @@
       resultsEl.appendChild(row);
     });
 
-    addGroup("Migration Map", results.families, function(f){
+    addGroup("World Map", results.families, function(f){
       var row = document.createElement("div");
       row.className = "gsr-row";
       row.textContent = f.name || "Unnamed family";
